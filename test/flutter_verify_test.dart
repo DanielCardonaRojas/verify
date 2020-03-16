@@ -14,6 +14,47 @@ class User extends Equatable {
   List<Object> get props => [phone, mail, age];
 }
 
+enum ErrorCode {
+  userMailEmpty,
+  userMailFormat,
+  userPhoneEmpty,
+  userPhoneFormat,
+}
+
+class Error implements ValidationError {
+  final String message;
+
+  Error(this.message);
+
+  factory Error.fromCode(ErrorCode code) {
+    return Error(_mapCodeToString(code));
+  }
+
+  @override
+  String get errorDescription => message;
+
+  static String _mapCodeToString(ErrorCode code) {
+    switch (code) {
+      case ErrorCode.userMailEmpty:
+        return '';
+      case ErrorCode.userMailFormat:
+        return '';
+      case ErrorCode.userPhoneEmpty:
+        return '';
+      case ErrorCode.userPhoneFormat:
+        return '';
+      default:
+        return '';
+    }
+  }
+
+  @override
+  List<Object> get props => [message];
+
+  @override
+  bool get stringify => null;
+}
+
 void main() {
   final tUserGood = User('3116419582', 'd.cardona.rojas@gmail.com', 25);
   final tUserBad = User('31123123', 'd.cardona.rojas', 25);
@@ -32,11 +73,11 @@ void main() {
   test('Can validate subfield of model with checkProperty method', () {
     final user = User('', '1', 25);
 
-    final userValidator = Verify.empty<String, User>()
+    final userValidator = Verify.empty<User>()
         .checkProperty((user) => !user.phone.isEmpty,
-            error: 'user phone cant be empty')
+            error: Error.fromCode(ErrorCode.userPhoneEmpty))
         .checkProperty((user) => !user.mail.isEmpty && user.mail.contains('@'),
-            error: 'user mail cant be empty');
+            error: Error.fromCode(ErrorCode.userMailFormat));
 
     final result = userValidator.verify(user);
     final errors = result.fold((errors) => errors.length, (_) => 0);
@@ -49,13 +90,13 @@ void main() {
 
     final emptyStringValidator = Verify.property(
         (String string) => !string.isEmpty,
-        otherwise: 'cant be empty');
+        error: Error('string cant be empty'));
 
     final emailValidator = Verify.property(
         (String email) => email.contains('@'),
-        otherwise: 'email has to contain @');
+        error: Error('email has to contain @'));
 
-    final userValidator = Verify.error<String, User>('user name not valid')
+    final userValidator = Verify.error<User>(Error('user name not valid'))
         .validatingField((user) => user.phone, emptyStringValidator)
         .validatingField((user) => user.mail, emailValidator);
 
@@ -72,13 +113,13 @@ void main() {
   });
 
   test('Can run an error validator to any subject type', () {
-    final errorValidator = Verify.error<String, User>('some errror');
+    final errorValidator = Verify.error<User>(Error('some errror'));
     final result = errorValidator.verify(tUserGood);
     assert(result.isLeft());
   });
 
   test('Can transform output of validator', () {
-    final stringValidator = Verify.valid<String, String>('123');
+    final stringValidator = Verify.valid<String>('123');
     final intValidator = stringValidator.map((value) => int.tryParse(value));
     final result =
         intValidator.verify('').fold((_) => 0, (parsedValue) => parsedValue);
@@ -86,20 +127,20 @@ void main() {
   });
 
   test('Can create and run an always failing validator', () {
-    final validator = Verify.error('some error');
+    final validator = Verify.error(Error('some error'));
     final result = validator.verify(tUserBad);
     assert(result.isLeft());
   });
 
   test('Can coerce error to any validator type', () {
-    final errorValidator = Verify.error<String, User>('some errror');
+    final errorValidator = Verify.error<User>(Error('some errror'));
     final result = errorValidator.verify(tUserGood);
     assert(result.isLeft());
   });
 
   test('Accumulates errors when running more than one failing validator', () {
-    final errorValidator = Verify.error<String, User>('some errror');
-    final errorValidator2 = Verify.error<String, User>('some errror');
+    final errorValidator = Verify.error<User>(Error('some errror'));
+    final errorValidator2 = Verify.error<User>(Error('some errror'));
 
     final validator = Verify.all([errorValidator, errorValidator2]);
     final result = validator.verify(tUserBad);
@@ -110,13 +151,14 @@ void main() {
   });
 
   test('Validator error preserve the order they where added in', () {
-    final firstErrorMsg = 'error1';
-    final secondErrorMsg = 'error2';
-    final errorValidator = Verify.error<String, User>(firstErrorMsg);
-    final errorValidator2 = Verify.error<String, User>(secondErrorMsg);
+    final firstErrorMsg = Error('error1');
+    final secondErrorMsg = Error('error2');
+    final errorValidator = Verify.error<User>(firstErrorMsg);
+    final errorValidator2 = Verify.error<User>(secondErrorMsg);
     final validator = Verify.all([errorValidator, errorValidator2]);
     final result = validator.verify(tUserBad);
-    final List<String> errorMessages = result.fold((l) => l, (_) => []);
+    final List<ValidationError> errorMessages =
+        result.fold((l) => l, (_) => []);
     expect(errorMessages, [firstErrorMsg, secondErrorMsg]);
   });
 
