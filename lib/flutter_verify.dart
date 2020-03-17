@@ -26,6 +26,10 @@ extension Verify on Validator {
     return (_) => Left([]);
   }
 
+  static Validator_<S> notNull<S>(ValidationError error) {
+    return Verify.property<S>((s) => s != null, error: error);
+  }
+
   static Validator_<S> property<S>(Predicate<S> predicate,
       {@required ValidationError error}) {
     return (s) => predicate(s) ? Right(s) : Left([error]);
@@ -36,12 +40,12 @@ extension Verify on Validator {
   }
 }
 
-extension VerifyProperties<E, S> on Validator_<S> {
+extension VerifyProperties<S> on Validator_<S> {
   Validator_<S> checkProperty(Predicate<S> predicate,
       {@required ValidationError error}) {
     final Validator_<S> validator =
         (s) => predicate(s) ? Right(s) : Left([error]);
-    return add(this, validator);
+    return compose(this, validator);
   }
 
   Validator_<S> validatingField<F>(
@@ -51,7 +55,7 @@ extension VerifyProperties<E, S> on Validator_<S> {
       final result = verification(focus);
       return result.map((_) => s);
     };
-    return add(this, fieldValidator);
+    return compose(this, fieldValidator);
   }
 }
 
@@ -88,7 +92,7 @@ Validator<S, T> verifyAll<S, T>(List<Validator<S, T>> verifications) {
   };
 }
 
-Validator<S, T> add<S, T>(Validator<S, T> lhs, Validator<S, T> rhs) {
+Validator<S, T> compose<S, T>(Validator<S, T> lhs, Validator<S, T> rhs) {
   return (S s) {
     final firstResult = lhs(s);
     final secondResult = rhs(s);

@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_verify/flutter_verify.dart';
 import 'package:test/test.dart';
+import 'package:meta/meta.dart';
 
 class User extends Equatable {
   final String phone;
@@ -12,6 +13,13 @@ class User extends Equatable {
 
   @override
   List<Object> get props => [phone, mail, age];
+}
+
+class ValidateString {
+  static Validator_<String> length(int length,
+      {@required ValidationError error}) {
+    return Verify.property((s) => s.length == length, error: error);
+  }
 }
 
 enum ErrorCode {
@@ -161,26 +169,4 @@ void main() {
         result.fold((l) => l, (_) => []);
     expect(errorMessages, [firstErrorMsg, secondErrorMsg]);
   });
-
-  // test('Different Validator apis yield the same result', () {
-  //   final tPhoneValidationV2 = Verify.onField(
-  //       (User user) => user.phone,
-  //       Verify.all([
-  //         VerifyString.minLength(11, otherwise: tUserBadPhoneLength),
-  //         VerifyString.notEmpty(errorMessage: tUserBadPhoneEmpty),
-  //       ]));
-
-  //   final Selector<User, String> phoneSelector = (user) => user.phone;
-  //   final tPhoneValidationV3 = phoneSelector.ensureAll([
-  //     VerifyString.minLength(11, otherwise: tUserBadPhoneLength),
-  //     VerifyString.notEmpty(errorMessage: tUserBadPhoneEmpty),
-  //   ]);
-
-  //   final result1 = tPhoneValidationV2.verify(tUserBad);
-  //   final result2 = tPhoneValidationV3.verify(tUserBad);
-
-  //   final Function eq = const DeepCollectionEquality().equals;
-  //   final result = eq(result1.toIterable(), result2.toIterable()) as bool;
-  //   // assert(result);
-  // });
 }
