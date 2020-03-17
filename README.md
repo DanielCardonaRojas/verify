@@ -3,8 +3,8 @@
 </p>
 
 <p align="center">
-<a href="https://travis-ci.com/DanielCardonaRojas/flutter_verify">
-<img alt="Build Status" src="https://travis-ci.org/DanielCardonaRojas/flutter_verify.svg?branch=master">
+<a href="https://travis-ci.com/DanielCardonaRojas/verify">
+<img alt="Build Status" src="https://travis-ci.org/DanielCardonaRojas/verify.svg?branch=master">
 </a>
 </p>
 
