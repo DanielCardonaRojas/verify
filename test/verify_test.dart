@@ -9,7 +9,7 @@ class User extends Equatable {
   final String mail;
   final int age;
 
-  User(this.phone, this.mail, this.age);
+  const User(this.phone, this.mail, this.age);
 
   @override
   List<Object> get props => [phone, mail, age];
@@ -44,13 +44,13 @@ class Error extends ValidationError {
   static String _mapCodeToString(ErrorCode code) {
     switch (code) {
       case ErrorCode.userMailEmpty:
-        return '';
+        return 'mail cant be empty';
       case ErrorCode.userMailFormat:
-        return '';
+        return 'bad mail format';
       case ErrorCode.userPhoneEmpty:
-        return '';
+        return 'phone cant be empty';
       case ErrorCode.userPhoneFormat:
-        return '';
+        return 'bad phone format';
       default:
         return '';
     }
@@ -61,11 +61,8 @@ class Error extends ValidationError {
 }
 
 void main() {
-  final tUserGood = User('3116419582', 'd.cardona.rojas@gmail.com', 25);
-  final tUserBad = User('31123123', 'd.cardona.rojas', 25);
-  final tUserBadPhoneLength = 'phone numbers must be of length 11';
-  final tUserBadEmail = 'bad email';
-  final tUserBadPhoneEmpty = 'phone cant be empty';
+  const tUserGood = User('3116419582', 'd.cardona.rojas@gmail.com', 25);
+  const tUserBad = User('31123123', 'd.cardona.rojas', 25);
 
   test(
       'transforming output type of validator does not have effect on failing validator',
@@ -77,18 +74,19 @@ void main() {
     final result2 = errorValidator.verify(tUserGood);
 
     final error1 = result.fold((e) => e, (_) => Error('1'));
-    final error2 = result.fold((e) => e, (_) => Error('2'));
+    final error2 = result2.fold((e) => e, (_) => Error('2'));
     assert(result.isLeft());
     assert(error1 == error2);
   });
 
   test('Can validate subfield of model with checkProperty method', () {
-    final user = User('', '1', 25);
+    const user = User('', '1', 25);
 
     final userValidator = Verify.empty<User>()
-        .checkProperty((user) => !user.phone.isEmpty,
+        .checkProperty((user) => user.phone.isNotEmpty,
             error: Error.fromCode(ErrorCode.userPhoneEmpty))
-        .checkProperty((user) => !user.mail.isEmpty && user.mail.contains('@'),
+        .checkProperty(
+            (user) => user.mail.isNotEmpty && user.mail.contains('@'),
             error: Error.fromCode(ErrorCode.userMailFormat));
 
     final result = userValidator.verify(user);
@@ -98,10 +96,10 @@ void main() {
   });
 
   test('Can validate subfield of model with other validator', () {
-    final user = User('', '1', 25);
+    const user = User('', '1', 25);
 
     final emptyStringValidator = Verify.property(
-        (String string) => !string.isEmpty,
+        (String string) => string.isNotEmpty,
         error: Error('string cant be empty'));
 
     final emailValidator = Verify.property(
