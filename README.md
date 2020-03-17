@@ -27,12 +27,12 @@ for Dart versions >= 2.6
 **Create simple validators from predicates**
 
 ```dart
-    final contains@ = Verify.property(
-      (String email) => email.contains('@'),
-        error: Error('email has to contain @')
-        );
+final contains@ = Verify.property(
+  (String email) => email.contains('@'),
+    error: Error('email has to contain @')
+    );
 
-    final notEmpty = Verify.propery<String>((str) => !str.isEmpty, error: Error('field required'));
+final notEmpty = Verify.propery<String>((str) => !str.isEmpty, error: Error('field required'));
 ```
 
 **Reuse validators**
