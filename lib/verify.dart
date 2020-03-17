@@ -3,8 +3,8 @@ library verify;
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-export 'package:equatable/equatable.dart';
-export 'package:dartz/dartz.dart';
+export 'package:equatable/equatable.dart' show Equatable;
+export 'package:dartz/dartz.dart' show Either;
 
 /// Base contract which all Validation errors should conform to.
 abstract class ValidationError extends Equatable {
