@@ -1,11 +1,22 @@
 <p align="center">
-<img src="verify_logo.png" height="250px">
+<img src="https://github.com/DanielCardonaRojas/verify/raw/master/verify_logo.png" height="250px">
 </p>
+
+<h2 align="center">
+  Validations made simple
+</h2>
 
 <p align="center">
 <a href="https://travis-ci.com/DanielCardonaRojas/verify">
 <img alt="Build Status" src="https://travis-ci.org/DanielCardonaRojas/verify.svg?branch=master">
 </a>
+ <a href="https://pub.dartlang.org/packages/verify">
+    <img alt="Pub Package" src="https://img.shields.io/pub/v/verify.svg">
+  </a>
+
+   <a href="https://opensource.org/licenses/MIT">
+    <img alt="MIT License" src="https://img.shields.io/badge/License-MIT-blue.svg">
+  </a>
 </p>
 
 A fp inspired validation DSL. For dart and flutter projects.
