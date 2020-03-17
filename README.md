@@ -1,5 +1,11 @@
 # Verify
 
+<p align="center">
+<a href="https://travis-ci.com/DanielCardonaRojas/flutter_verify">
+<img alt="Build Status" src="https://travis-ci.org/DanielCardonaRojas/flutter_verify.svg?branch=master">
+</a>
+</p>
+
 A fp inspired validation DSL. For dart and flutter projects.
 
 # Requirements
