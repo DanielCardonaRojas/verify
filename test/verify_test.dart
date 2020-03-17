@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_verify/flutter_verify.dart';
+import 'package:verify/verify.dart';
 import 'package:test/test.dart';
 import 'package:meta/meta.dart';
 
