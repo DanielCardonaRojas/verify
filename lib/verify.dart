@@ -65,9 +65,7 @@ extension Verify on Validator {
 extension VerifyProperties<S> on Validator_<S> {
   Validator_<S> checkProperty(Predicate<S> predicate,
       {@required ValidationError error}) {
-    final Validator_<S> validator =
-        (s) => predicate(s) ? Right(s) : Left([error]);
-    return _compose(this, validator);
+    return _compose(this, (S s) => predicate(s) ? Right(s) : Left([error]));
   }
 
   /// Creates a new validator that includes checks on an object field.
@@ -104,10 +102,10 @@ Validator<S, T> _verifyAll<S, T>(List<Validator<S, T>> verifications) {
   return (s) {
     final list = verifications.map((v) => v(s)).toList();
 
-    final errors = List<ValidationError>();
+    final List<ValidationError> errors = [];
 
     for (final item in list) {
-      errors.addAll(item.fold((e) => e, (_) => List<ValidationError>()));
+      errors.addAll(item.fold((e) => e, (_) => []));
     }
 
     if (errors.isEmpty) {
@@ -125,7 +123,7 @@ Validator<S, T> _compose<S, T>(Validator<S, T> lhs, Validator<S, T> rhs) {
     final secondResult = rhs(s);
     final list = [firstResult, secondResult];
 
-    final errors = List<ValidationError>();
+    final List<ValidationError> errors = [];
 
     for (final item in list) {
       errors.addAll(item.fold((e) => e, (_) => []));

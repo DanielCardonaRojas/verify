@@ -1,0 +1,9 @@
+include: package:lint/analysis_options.yaml
+linter:
+  rules:
+    parameter_assignments: true
+    prefer_function_declarations_over_variables: false
+analyzer:
+  errors:
+    missing_required_param: error
+    parameter_assignments: error
