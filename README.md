@@ -1,4 +1,6 @@
-# Verify
+<p align="center">
+<img src="verify_logo.png" height="250px">
+</p>
 
 <p align="center">
 <a href="https://travis-ci.com/DanielCardonaRojas/flutter_verify">
