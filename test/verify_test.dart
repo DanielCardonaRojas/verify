@@ -29,7 +29,7 @@ enum ErrorCode {
   userPhoneFormat,
 }
 
-class Error implements ValidationError {
+class Error extends ValidationError {
   final String message;
 
   Error(this.message);
@@ -58,9 +58,6 @@ class Error implements ValidationError {
 
   @override
   List<Object> get props => [message];
-
-  @override
-  bool get stringify => null;
 }
 
 void main() {
@@ -70,13 +67,20 @@ void main() {
   final tUserBadEmail = 'bad email';
   final tUserBadPhoneEmpty = 'phone cant be empty';
 
-// API1
-  // final tPhoneValidationV1 = Verify<User>.property((user) {
-  //   return user.phone.length == 11;
-  // }, otherwise: tUserBadPhoneLength);
+  test(
+      'transforming output type of validator does not have effect on failing validator',
+      () {
+    final errorValidator = Verify.error<User>(Error(''));
+    final Validator<User, int> transformedValidator =
+        errorValidator.map((_) => 25);
+    final result = transformedValidator.verify(tUserGood);
+    final result2 = errorValidator.verify(tUserGood);
 
-  // final tEmailValidation = Verify.onField((User user) => user.mail,
-  //     VerifyString.contains('@', errorMessage: tUserBadEmail));
+    final error1 = result.fold((e) => e, (_) => Error('1'));
+    final error2 = result.fold((e) => e, (_) => Error('2'));
+    assert(result.isLeft());
+    assert(error1 == error2);
+  });
 
   test('Can validate subfield of model with checkProperty method', () {
     final user = User('', '1', 25);
