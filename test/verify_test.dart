@@ -58,6 +58,9 @@ class Error extends ValidationError {
 
   @override
   List<Object> get props => [message];
+
+  @override
+  bool get stringify => true;
 }
 
 void main() {
@@ -67,14 +70,14 @@ void main() {
   test(
       'transforming output type of validator does not have effect on failing validator',
       () {
-    final errorValidator = Verify.error<User>(Error(''));
+    final errorValidator = Verify.error<User>(Error('validation error'));
     final Validator<User, int> transformedValidator =
         errorValidator.map((_) => 25);
     final result = transformedValidator.verify(tUserGood);
     final result2 = errorValidator.verify(tUserGood);
 
-    final error1 = result.fold((e) => e, (_) => Error('1'));
-    final error2 = result2.fold((e) => e, (_) => Error('2'));
+    final error1 = result.fold((e) => e.first, (_) => Error('1'));
+    final error2 = result2.fold((e) => e.first, (_) => Error('2'));
     assert(result.isLeft());
     assert(error1 == error2);
   });

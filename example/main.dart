@@ -38,4 +38,6 @@ void main() {
   final someUser = User('', '', 25);
   final Either<List<Error>, User> validationResult =
       userValidator.verify(someUser);
+
+  print(validationResult);
 }

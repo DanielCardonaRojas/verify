@@ -1,3 +1,5 @@
-## [0.0.1] - TODO: Add release date.
+## [0.1.0] - Changelog
 
-* TODO: Describe initial release.
+- Updated documentation
+- Added linting configuration (analysis_options.yaml)
+- Fixed tests
