@@ -19,11 +19,11 @@
   </a>
 </p>
 
-A fp inspired validation DSL. For dart and flutter projects.
+A fp inspired validation DSL. For Dart and Flutter projects.
 
-# Requirements
+## Requirements
 
-The implementation of Verify relies on heavily on dart extension methods, which are available
+The implementation of Verify relies heavily on dart extension methods, which are available
 for Dart versions >= 2.6
 
 ## Features
@@ -53,7 +53,7 @@ final Validator_<String> emailValidator = Verify.all([ contains@, notEmpty ])
 
 ```
 
-**Validate a model correctness**
+**Validate model correctness**
 
 Given a model, for instance a user:
 
