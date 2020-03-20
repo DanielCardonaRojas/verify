@@ -82,14 +82,55 @@ void main() {
     assert(error1 == error2);
   });
 
+  test('flatmap does not collect both validator errors', () {
+    final someUser = User('', '', null);
+    final error1 = Error('validation error');
+    final error2 = Error('age is required');
+    final errorValidator = Verify.error<User>(error1);
+    final ageNotNullValidator = Verify.notNull<int>(error2);
+    final validator =
+        errorValidator.flatMap((user) => ageNotNullValidator.verify(user.age));
+    final result = validator.verify(someUser);
+    final errors = result.fold((e) => e, (_) => [Error('')]);
+
+    assert(result.isLeft());
+    assert(errors.length == 1);
+    assert(errors.first == error1);
+  });
+
+  test('a >>+= b yields errors of b when a succeeds but b fails', () {
+    final someUser = User('', '', null);
+    final error2 = Error('age is required');
+    final userValidator = Verify.valid<User>(someUser);
+    final ageNotNullValidator = Verify.notNull<int>(error2);
+    final validator =
+        userValidator.flatMap((user) => ageNotNullValidator.verify(user.age));
+    final result = validator.verify(someUser);
+    final errors = result.fold((e) => e, (_) => [Error('')]);
+
+    assert(result.isLeft());
+    assert(errors.length == 1);
+    assert(errors.first == error2);
+  });
+
+  test(
+      'Validator<S,T> >>+= Validator<T, O> returns Validator<S,O> that combines both mappings',
+      () {
+    final someString = '';
+    final countStringLength = Verify.lift((String str) => str.length);
+    final greaterThenOne = Verify.lift((int count) => count > 1);
+    final validator = countStringLength.flatMap(greaterThenOne);
+    final result = validator.verify('123').fold((_) => -1, (v) => v);
+    assert(result == true);
+  });
+
   test('Can validate subfield of model with checkProperty method', () {
     const user = User('', '1', 25);
 
     final userValidator = Verify.empty<User>()
-        .checkProperty((user) => user.phone.isNotEmpty,
+        .check((user) => user.phone.isNotEmpty,
             error: Error.fromCode(ErrorCode.userPhoneEmpty))
-        .checkProperty(
-            (user) => user.mail.isNotEmpty && user.mail.contains('@'),
+        .check((user) => user.mail.isNotEmpty && user.mail.contains('@'),
             error: Error.fromCode(ErrorCode.userMailFormat));
 
     final result = userValidator.verify(user);
@@ -110,8 +151,8 @@ void main() {
         error: Error('email has to contain @'));
 
     final userValidator = Verify.error<User>(Error('user name not valid'))
-        .validatingField((user) => user.phone, emptyStringValidator)
-        .validatingField((user) => user.mail, emailValidator);
+        .checkField((user) => user.phone, emptyStringValidator)
+        .checkField((user) => user.mail, emailValidator);
 
     final result = userValidator.verify(user);
     final errors = result.fold((errors) => errors.length, (_) => 0);
@@ -123,6 +164,16 @@ void main() {
     final validator = Verify.valid(tUserGood);
     final result = validator.verify(tUserBad);
     assert(result.isRight());
+  });
+
+  test('Can handle errors with onException combinator', () {
+    final error = Error('not a proper int');
+    final Validator<String, int> intParsingValidator =
+        (String str) => Right(int.parse(str));
+    final validator = intParsingValidator.onException((_) => error);
+    final result = validator.verify('12s');
+    final resultError = result.fold((e) => e.first, (v) => Error(''));
+    assert(resultError == error);
   });
 
   test('Can run an error validator to any subject type', () {
