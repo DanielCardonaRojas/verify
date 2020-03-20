@@ -7,7 +7,7 @@
 </h2>
 
 <p align="center">
-<a href="https://travis-ci.com/DanielCardonaRojas/verify">
+<a href="https://travis-ci.org/github/DanielCardonaRojas/verify">
 <img alt="Build Status" src="https://travis-ci.org/DanielCardonaRojas/verify.svg?branch=master">
 </a>
  <a href="https://pub.dartlang.org/packages/verify">
@@ -61,7 +61,7 @@ final contains@ = Verify.property(
     error: Error('email has to contain @')
     );
 
-final notEmpty = Verify.propery<String>((str) => !str.isEmpty, error: Error('field required'));
+final notEmpty = Verify.property<String>((str) => !str.isEmpty, error: Error('field required'));
 ```
 
 ### Reuse validators
