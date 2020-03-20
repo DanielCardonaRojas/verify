@@ -33,9 +33,27 @@ for Dart versions >= 2.6
 - Customizable (Define you own error types) organize validators how ever you want
 - Plays well with bloc
 
-## Examples
+## Usage
+
+### Creating validators
+
+A Validator is just simple function alias for: 
+
+```dart
+typedef Validator<S, T> = Either<List<ValidationError>, T> Function(S subject);
+```
+
+So you can create your own validator by just specifying a function for exmple: 
+
+```dart
+final Validator_<String> emailValidator = (String email) {
+  return email.contains('@') ? Right(email) : Left(Error('must contain @'))
+}; 
+```
 
 **Create simple validators from predicates**
+
+A simpler way is to use some of the built it helpers.
 
 ```dart
 final contains@ = Verify.property(
@@ -48,9 +66,21 @@ final notEmpty = Verify.propery<String>((str) => !str.isEmpty, error: Error('fie
 
 **Reuse validators**
 
+Use composition to build up more complex validators.
+
 ```dart
 final Validator_<String> emailValidator = Verify.all([ contains@, notEmpty ])
+```
 
+**Validate and transform**
+
+Validators are also capable of transforming their input, so for instance we can do
+parsing and validation in one go.
+
+```dart
+final Validator<String, int> intParsingValidator = (String str) => Right(int.parse(str));
+
+final validator = intParsingValidator.onException((_) => Error('not an integer'));
 ```
 
 **Validate model correctness**
@@ -74,22 +104,9 @@ Create some validations on its fields
 
 ```dart
 final userValidator = Verify.empty<User>()
-    .checkProperty((user) => !user.phone.isEmpty, error: Error('phone empty'))
-    .validatingField((user) => user.mail, emailValidator);
+    .check((user) => !user.phone.isEmpty, error: Error('phone empty'))
+    .checkField((user) => user.mail, emailValidator);
 
 final someUser = User('','', 25);
 final Either<List<Error>, User> validationResult = userValidator.verify(someUser);
-```
-
-**Organize validators**
-
-Here is one approach to organize validations for specific type
-
-```dart
-class ValidateString {
-  static Validator_<String> length(int length,
-      {@required ValidationError error}) {
-    return Verify.property((s) => s.length == length, error: error);
-  }
-}
 ```

@@ -54,6 +54,13 @@ extension Verify on Validator {
     return (s) => predicate(s) ? Right(s) : Left([error]);
   }
 
+  /// Creates a purely input mapping validator
+  ///
+  /// Lift a selector into the context of a Validator
+  static Validator<S, T> lift<S, T>(Selector<S, T> mapping) {
+    return (S input) => Right(mapping(input));
+  }
+
   /// Creates a new validator by composing a list of validators
   ///
   /// Validation errors preserve the order of the validator list
@@ -62,14 +69,15 @@ extension Verify on Validator {
   }
 }
 
+/// Extension for methods related to subfield validations.
 extension VerifyProperties<S> on Validator_<S> {
-  Validator_<S> checkProperty(Predicate<S> predicate,
+  Validator_<S> check(Predicate<S> predicate,
       {@required ValidationError error}) {
     return _compose(this, (S s) => predicate(s) ? Right(s) : Left([error]));
   }
 
   /// Creates a new validator that includes checks on an object field.
-  Validator_<S> validatingField<F>(
+  Validator_<S> checkField<F>(
       Selector<S, F> selector, Validator_<F> verification) {
     final Validator_<S> fieldValidator = (S s) {
       final focus = selector(s);
@@ -94,6 +102,30 @@ extension ValidatorUtils<S, T> on Validator<S, T> {
       return eitherErrorOrInput.map((value) {
         return transform(value);
       });
+    };
+  }
+
+  /// Chains a validation to the output
+  Validator<S, O> flatMap<O>(Validator<T, O> validator) {
+    return (S input) {
+      final Either<List<ValidationError>, T> lhsOutput = this(input);
+
+      final Either<List<ValidationError>, O> result = lhsOutput.fold(
+        (err) => Left(err),
+        (value) => validator.verify(value),
+      );
+
+      return result;
+    };
+  }
+
+  Validator<S, T> onException(Selector<Exception, ValidationError> handler) {
+    return (S input) {
+      try {
+        return this(input);
+      } catch (e, _) {
+        return Left([handler(e as Exception)]);
+      }
     };
   }
 }
