@@ -37,7 +37,7 @@ for Dart versions >= 2.6
 
 ### Creating validators
 
-A Validator is just simple function alias for: 
+A Validator is just a simple function alias: 
 
 ```dart
 typedef Validator<S, T> = Either<List<ValidationError>, T> Function(S subject);
@@ -64,7 +64,7 @@ final contains@ = Verify.property(
 final notEmpty = Verify.propery<String>((str) => !str.isEmpty, error: Error('field required'));
 ```
 
-**Reuse validators**
+### Reuse validators
 
 Use composition to build up more complex validators.
 
@@ -72,7 +72,7 @@ Use composition to build up more complex validators.
 final Validator_<String> emailValidator = Verify.all([ contains@, notEmpty ])
 ```
 
-**Validate and transform**
+### Validate and transform
 
 Validators are also capable of transforming their input, so for instance we can do
 parsing and validation in one go.
@@ -83,7 +83,7 @@ final Validator<String, int> intParsingValidator = (String str) => Right(int.par
 final validator = intParsingValidator.onException((_) => Error('not an integer'));
 ```
 
-**Validate model correctness**
+### Field validations
 
 Given a model, for instance a user:
 
@@ -100,7 +100,7 @@ class User extends Equatable {
 }
 ```
 
-Create some validations on its fields
+Additional checks can be performed on the object and its fields using `check` and `checkField`
 
 ```dart
 final userValidator = Verify.empty<User>()
