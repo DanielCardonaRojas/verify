@@ -1,5 +1,7 @@
-## [0.1.0] - Changelog
+## [0.2.0] - Changelog
 
-- Updated documentation
-- Added linting configuration (analysis_options.yaml)
-- Fixed tests
+- Renamed object and field validators to check and checkField.
+- Added flatMap operation to chain validators
+- Added lift Verify extenion to create succeding validators that just transform input.
+- Added validator helper to handle exceptions.
+- Updated readme.
