@@ -32,8 +32,8 @@ void main() {
   final Validator_<String> emailValidator =
       Verify.all([containsAtSign, notEmpty]);
   final userValidator = Verify.empty<User>()
-      .checkProperty((user) => !user.phone.isEmpty, error: Error('phone empty'))
-      .validatingField((user) => user.mail, emailValidator);
+      .check((user) => !user.phone.isEmpty, error: Error('phone empty'))
+      .checkField((user) => user.mail, emailValidator);
 
   final someUser = User('', '', 25);
   final Either<List<Error>, User> validationResult =
