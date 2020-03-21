@@ -89,7 +89,7 @@ void main() {
     final errorValidator = Verify.error<User>(error1);
     final ageNotNullValidator = Verify.notNull<int>(error2);
     final validator =
-        errorValidator.flatMap((user) => ageNotNullValidator.verify(user.age));
+        errorValidator.join((user) => ageNotNullValidator.verify(user.age));
     final result = validator.verify(someUser);
     final errors = result.fold((e) => e, (_) => [Error('')]);
 
@@ -104,7 +104,7 @@ void main() {
     final userValidator = Verify.valid<User>(someUser);
     final ageNotNullValidator = Verify.notNull<int>(error2);
     final validator =
-        userValidator.flatMap((user) => ageNotNullValidator.verify(user.age));
+        userValidator.join((user) => ageNotNullValidator.verify(user.age));
     final result = validator.verify(someUser);
     final errors = result.fold((e) => e, (_) => [Error('')]);
 
@@ -119,7 +119,7 @@ void main() {
     final someString = '';
     final countStringLength = Verify.lift((String str) => str.length);
     final greaterThenOne = Verify.lift((int count) => count > 1);
-    final validator = countStringLength.flatMap(greaterThenOne);
+    final validator = countStringLength.join(greaterThenOne);
     final result = validator.verify('123').fold((_) => -1, (v) => v);
     assert(result == true);
   });

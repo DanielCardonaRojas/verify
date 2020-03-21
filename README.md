@@ -40,6 +40,7 @@ for Dart versions >= 2.6
 A Validator is just a simple function alias: 
 
 ```dart
+// S is the input type and T the output type
 typedef Validator<S, T> = Either<List<ValidationError>, T> Function(S subject);
 ```
 
@@ -109,4 +110,16 @@ final userValidator = Verify.empty<User>()
 
 final someUser = User('','', 25);
 final Either<List<Error>, User> validationResult = userValidator.verify(someUser);
+```
+
+### Built it validators
+Verify doesn't come with many built it validators because the idea is to leave
+this to client code. 
+
+But it does have a few conviniences:
+
+```dart
+    final validator = RegExp(r"(^\d+$)") // Validator<String, int>
+        .matchOr(Error('not just digits'))
+        .map((str) => int.tryParse(str));
 ```
