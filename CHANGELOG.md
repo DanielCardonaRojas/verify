@@ -1,5 +1,5 @@
-## [1.0.0] - Changelog
+## [1.0.1] - Changelog
 
-- Flatmap join correction
-- Added regex validator
-- Updated readme.
+- Added codecov
+- Fixed library placement 
+- Updated docs.

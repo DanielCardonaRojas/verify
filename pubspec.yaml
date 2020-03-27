@@ -1,6 +1,6 @@
 name: verify
 description: Validations made simple. An extension based validation DSL.
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/DanielCardonaRojas/verify
 
 environment:
