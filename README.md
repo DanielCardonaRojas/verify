@@ -14,9 +14,14 @@
     <img alt="Pub Package" src="https://img.shields.io/pub/v/verify.svg">
   </a>
 
-   <a href="https://opensource.org/licenses/MIT">
-    <img alt="MIT License" src="https://img.shields.io/badge/License-MIT-blue.svg">
+  <a href="https://codecov.io/gh/DanielCardonaRojas/verify">
+    <img alt="Codecov" src="https://codecov.io/gh/DanielCardonaRojas/verify/branch/master/graph/badge.svg">
   </a>
+
+<a href="https://opensource.org/licenses/MIT">
+<img alt="MIT License" src="https://img.shields.io/badge/License-MIT-blue.svg">
+</a>
+
 </p>
 
 A fp inspired validation DSL. For Dart and Flutter projects.
@@ -37,24 +42,24 @@ for Dart versions >= 2.6
 
 ### Creating validators
 
-A Validator is just a simple function alias: 
+A Validator is just a simple function alias:
 
 ```dart
 // S is the input type and T the output type
 typedef Validator<S, T> = Either<List<ValidationError>, T> Function(S subject);
 ```
 
-So you can create your own validator by just specifying a function for exmple: 
+So you can create your own validator by just specifying a function for exmple:
 
 ```dart
 final Validator_<String> emailValidator = (String email) {
   return email.contains('@') ? Right(email) : Left(Error('must contain @'))
-}; 
+};
 ```
 
 **Create simple validators from predicates**
 
-A simpler way is to use some of the built it helpers.
+A simpler way is to use some of the built in helpers.
 
 ```dart
 final contains@ = Verify.property(
@@ -112,11 +117,11 @@ final someUser = User('','', 25);
 final Either<List<Error>, User> validationResult = userValidator.verify(someUser);
 ```
 
-### Built it validators
-Verify doesn't come with many built it validators because the idea is to leave
-this to client code. 
+### Built in validators
 
-But it does have a few conviniences:
+Verify doesn't come with many built in validators, because they are so simple to create.
+
+But here are a few that are included out of the box:
 
 ```dart
     final validator = RegExp(r"(^\d+$)") // Validator<String, int>
