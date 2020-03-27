@@ -1,4 +1,5 @@
 # Miscellaneous
+.test_coverage.dart
 *.class
 *.log
 *.pyc
@@ -8,6 +9,8 @@
 .buildlog/
 .history
 .svn/
+coverage/
+# coverage_badge.svg
 
 # IntelliJ related
 *.iml

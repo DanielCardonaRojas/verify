@@ -1,8 +1,7 @@
-library verify;
-
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
+import 'package:verify/verify.dart';
 export 'package:equatable/equatable.dart' show Equatable;
 export 'package:dartz/dartz.dart' show Either;
 
@@ -27,6 +26,8 @@ typedef Predicate<S> = bool Function(S subject);
 typedef Selector<S, F> = F Function(S subject);
 
 /// Scope to access most validator facilities.
+///
+/// All the methods in this scope are static
 extension Verify on Validator {
   /// Creates an always succeding validator
   static Validator_<S> valid<S>(S subject) {
@@ -88,6 +89,9 @@ extension VerifyProperties<S> on Validator_<S> {
   }
 }
 
+/// Utilities that can be called on a Validator
+///
+/// Scope for all instance methods
 extension ValidatorUtils<S, T> on Validator<S, T> {
   /// Runs the validator and returns either a list of errors or the coerced input.
   Either<List<ValidationError>, T> verify(S subject) {
@@ -114,7 +118,7 @@ extension ValidatorUtils<S, T> on Validator<S, T> {
 
       final Either<List<ValidationError>, O> result = lhsOutput.fold(
         (err) => Left(err),
-        (value) => validator.verify(value),
+        (value) => validator(value),
       );
 
       return result;
@@ -129,7 +133,11 @@ extension ValidatorUtils<S, T> on Validator<S, T> {
 
       final Either<List<ValidationError>, O> result = lhsOutput.fold(
         (err) => Left(err),
-        (value) => process(value).verify(value),
+        (T value) {
+          final Validator<T, O> producedValidator = process(value);
+          final result = producedValidator(value);
+          return result;
+        },
       );
 
       return result;
