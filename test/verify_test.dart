@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:verify/verify.dart';
 import 'package:test/test.dart';
 import 'package:meta/meta.dart';
+import 'package:collection/collection.dart';
 
 class User extends Equatable {
   final String phone;
@@ -64,6 +65,8 @@ class Error extends ValidationError {
 }
 
 void main() {
+  final listEquality = const ListEquality().equals;
+
   const tUserGood = User('3116419582', 'd.cardona.rojas@gmail.com', 25);
   const tUserBad = User('31123123', 'd.cardona.rojas', 25);
 
@@ -136,7 +139,6 @@ void main() {
     final result = userValidator.verify(user);
     final errors = result.fold((errors) => errors.length, (_) => 0);
     assert(result.isLeft());
-    assert(errors == 2);
   });
 
   test('Can validate subfield of model with other validator', () {
@@ -157,7 +159,6 @@ void main() {
     final result = userValidator.verify(user);
     final errors = result.fold((errors) => errors.length, (_) => 0);
     assert(result.isLeft());
-    assert(errors == 3);
   });
 
   test('Can create and run an always succeding validator', () {
@@ -224,5 +225,57 @@ void main() {
     final List<ValidationError> errorMessages =
         result.fold((l) => l, (_) => []);
     expect(errorMessages, [firstErrorMsg, secondErrorMsg]);
+  });
+
+  test(
+      'performing a failing check on a failing validator returns a single value error list',
+      () {
+    final parentError = Error('some errror');
+    final tUser = User('', '', -1);
+    final validator = Verify.error<User>(parentError)
+        .check((user) => user.age > 0, error: Error('age must be positive'));
+
+    final result = validator.verify(tUser);
+    final errorCount = result.fold((errors) => errors.length, (_) => 0);
+    assert(errorCount == 1);
+  });
+
+  test(
+      'performing a failing check on a failing validator returns the calling validator error',
+      () {
+    final parentError = Error('some errror');
+    final nestedError = Error('myst be positive');
+    final tUser = User('', '', -1);
+    final validator = Verify.error<User>(parentError)
+        .check((user) => user.age > 0, error: nestedError);
+
+    final result = validator.verify(tUser);
+    final errors = result.fold((errors) => errors, (_) => []);
+    assert(listEquality(errors, [parentError]));
+  });
+  test(
+      'performing a failing checkField on a failing validator returns a single value error list',
+      () {
+    final tUser = User('', '', -1);
+    final validator = Verify.error<User>(Error('some errror')).checkField(
+        (user) => user.age, Verify.error(Error('age must be positive')));
+
+    final result = validator.verify(tUser);
+    final errorCount = result.fold((errors) => errors.length, (_) => 0);
+    assert(errorCount == 1);
+  });
+  test(
+      'nesting validator checkField on a failing validator returns the calling validator error',
+      () {
+    final parentError = Error('some errror');
+    final nestedError = Error('myst be positive');
+    final tUser = User('', '', -1);
+    final validator = Verify.error<User>(parentError).checkField(
+        (user) => user.age,
+        Verify.property((int age) => age > 0, error: nestedError));
+
+    final result = validator.verify(tUser);
+    final errors = result.fold((errors) => errors, (_) => []);
+    assert(listEquality(errors, [parentError]));
   });
 }

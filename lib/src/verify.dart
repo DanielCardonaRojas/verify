@@ -72,12 +72,21 @@ extension Verify on Validator {
 
 /// Extension for methods related to subfield validations.
 extension VerifyProperties<S> on Validator_<S> {
+  /// Creates a new validator that nests checks on an object field.
+  ///
+  /// If both the calling validator and the additional check fail, the
+  /// error produced by the calling is returned.
   Validator_<S> check(Predicate<S> predicate,
       {@required ValidationError error}) {
-    return _compose(this, (S s) => predicate(s) ? Right(s) : Left([error]));
+    final Validator_<S> predicateValidator =
+        (S s) => predicate(s) ? Right(s) : Left([error]);
+    return _join(this, predicateValidator);
   }
 
-  /// Creates a new validator that includes checks on an object field.
+  /// Creates a new validator by nesting the provided one.
+  ///
+  /// If both the calling validator and the additional check fail,
+  /// the error produced by the calling is returned.
   Validator_<S> checkField<F>(
       Selector<S, F> selector, Validator_<F> verification) {
     final Validator_<S> fieldValidator = (S s) {
@@ -85,7 +94,7 @@ extension VerifyProperties<S> on Validator_<S> {
       final result = verification(focus);
       return result.map((_) => s);
     };
-    return _compose(this, fieldValidator);
+    return _join(this, fieldValidator);
   }
 }
 
@@ -113,16 +122,7 @@ extension ValidatorUtils<S, T> on Validator<S, T> {
   ///
   /// Equivalent to flatMap((_) => validator)
   Validator<S, O> join<O>(Validator<T, O> validator) {
-    return (S input) {
-      final Either<List<ValidationError>, T> lhsOutput = this(input);
-
-      final Either<List<ValidationError>, O> result = lhsOutput.fold(
-        (err) => Left(err),
-        (value) => validator(value),
-      );
-
-      return result;
-    };
+    return _join(this, validator);
   }
 
   /// Recieves a function that generates a validator and plumbs the output of the
@@ -190,5 +190,18 @@ Validator<S, T> _compose<S, T>(Validator<S, T> lhs, Validator<S, T> rhs) {
     } else {
       return Left(errors);
     }
+  };
+}
+
+Validator<S, O> _join<S, T, O>(Validator<S, T> lhs, Validator<T, O> rhs) {
+  return (S input) {
+    final Either<List<ValidationError>, T> lhsOutput = lhs(input);
+
+    final Either<List<ValidationError>, O> result = lhsOutput.fold(
+      (err) => Left(err),
+      (value) => rhs(value),
+    );
+
+    return result;
   };
 }
