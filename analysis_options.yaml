@@ -3,6 +3,7 @@ linter:
   rules:
     parameter_assignments: true
     prefer_function_declarations_over_variables: false
+    ambiguous_extension_member_access: false
 analyzer:
   errors:
     missing_required_param: error

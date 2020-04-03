@@ -86,7 +86,7 @@ packages:
     source: hosted
     version: "0.8.9"
   equatable:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: equatable
       url: "https://pub.dartlang.org"
