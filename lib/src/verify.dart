@@ -1,16 +1,11 @@
 import 'package:dartz/dartz.dart';
-import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:verify/verify.dart';
-export 'package:equatable/equatable.dart' show Equatable;
 export 'package:dartz/dartz.dart' show Either;
 
 /// Base contract which all Validation errors should conform to.
-abstract class ValidationError extends Equatable {
+abstract class ValidationError {
   String get errorDescription;
-
-  @override
-  bool get stringify => true;
 }
 
 /// A Validator is a function that can process input to
@@ -89,12 +84,23 @@ extension VerifyProperties<S> on Validator_<S> {
   /// the error produced by the calling is returned.
   Validator_<S> checkField<F>(
       Selector<S, F> selector, Validator_<F> verification) {
+    final bypassingValidation = _ignoreNull(verification);
     final Validator_<S> fieldValidator = (S s) {
       final focus = selector(s);
-      final result = verification(focus);
+      final result = bypassingValidation(focus);
       return result.map((_) => s);
     };
     return _join(this, fieldValidator);
+  }
+
+  /// Ignore calling validator when the give predicate holds.
+  Validator_<S> ignoreWhen(Predicate<S> condition) {
+    return _ignoreWhen<S>(condition, this);
+  }
+
+  /// Ignore calling validator when input is null.
+  Validator_<S> ignoreNull() {
+    return _ignoreWhen((S s) => s == null, this);
   }
 }
 
@@ -102,9 +108,26 @@ extension VerifyProperties<S> on Validator_<S> {
 ///
 /// Scope for all instance methods
 extension ValidatorUtils<S, T> on Validator<S, T> {
-  /// Runs the validator and returns either a list of errors or the coerced input.
-  Either<List<ValidationError>, T> verify(S subject) {
-    return this(subject);
+  /// Returns the next error that successfully casts to ErrorType
+  ///
+  /// Otherwise returns null.
+  Either<List<ErrorType>, T> verify<ErrorType extends ValidationError>(
+      S subject) {
+    return this(subject).leftMap((errors) {
+      final Iterable<ErrorType> filtered = errors.whereType();
+      return filtered.toList();
+    });
+  }
+
+  /// Returns the validated and transformed subject
+  /// If validation of subject fails returns null
+  T validated(S subject) {
+    return this(subject).fold(
+      (errors) {
+        return null;
+      },
+      (s) => s,
+    );
   }
 
   /// Transforms the input of the validator by running the provided function.
@@ -204,4 +227,18 @@ Validator<S, O> _join<S, T, O>(Validator<S, T> lhs, Validator<T, O> rhs) {
 
     return result;
   };
+}
+
+Validator_<S> _ignoreWhen<S>(Predicate<S> condition, Validator_<S> validator) {
+  return (S input) => condition(input) ? Right(input) : validator(input);
+}
+
+Validator_<S> _ignoreNull<S>(Validator_<S> validator) {
+  return _ignoreWhen((S input) => input == null, validator);
+}
+
+extension ValidationResult<T, E extends ValidationError> on Either<List<E>, T> {
+  E get firstError {
+    return fold((errors) => errors.first, (_) => null);
+  }
 }

@@ -5,16 +5,8 @@ import 'package:test/test.dart';
 import 'package:meta/meta.dart';
 import 'package:collection/collection.dart';
 
-class User extends Equatable {
-  final String phone;
-  final String mail;
-  final int age;
-
-  const User(this.phone, this.mail, this.age);
-
-  @override
-  List<Object> get props => [phone, mail, age];
-}
+import 'enumerated_error.dart';
+import 'user.dart';
 
 class ValidateString {
   static Validator_<String> length(int length,
@@ -241,6 +233,19 @@ void main() {
   });
 
   test(
+      'performing a succeding check on a failing validator returns a single value error list',
+      () {
+    final parentError = Error('some errror');
+    final tUser = User('', '', 10);
+    final validator = Verify.error<User>(parentError)
+        .check((user) => user.age > 0, error: Error('age must be positive'));
+
+    final result = validator.verify(tUser);
+    final errorCount = result.fold((errors) => errors.length, (_) => 0);
+    assert(errorCount == 1);
+  });
+
+  test(
       'performing a failing check on a failing validator returns the calling validator error',
       () {
     final parentError = Error('some errror');
@@ -277,5 +282,73 @@ void main() {
     final result = validator.verify(tUser);
     final errors = result.fold((errors) => errors, (_) => []);
     assert(listEquality(errors, [parentError]));
+  });
+
+  test('fails on null', () {
+    final tError = Error('cant be null');
+    final dateValidation = Verify.notNull<DateTime>(tError).check(
+      (DateTime date) {
+        final duration = date.difference(DateTime.now());
+        return duration.inMinutes >= 2;
+      },
+      error: Error('Doesnt satisfy time constraints'),
+    );
+
+    final result = dateValidation.verify(null);
+    final errors = result.fold((e) => e, (_) => []);
+    assert(listEquality(errors, [tError]));
+  });
+
+  test('firstError filters through errors and returns first of type', () {
+    final error1 = Verify.error<int>(Field1Error());
+    final error2 = Verify.error<int>(Field1Error());
+    final error3 = Verify.error<int>(Field2Error());
+
+    final validator = Verify.all([
+      error1,
+      error2,
+      error3,
+    ]);
+
+    final result = validator.verify<Field2Error>(9).firstError;
+    assert(result != null);
+    assert(result.errorDescription == Field2Error().errorDescription);
+  });
+
+  test('verify can filter error list when a generic parameter supplied', () {
+    final error1 = Verify.error<int>(Field1Error());
+    final error2 = Verify.error<int>(Field1Error());
+    final error3 = Verify.error<int>(Field2Error());
+
+    final validator = Verify.all([
+      error1,
+      error2,
+      error3,
+    ]);
+
+    final result = validator.verify<Field1Error>(9);
+    final result2 = validator.verify(9);
+    final errorCount1 = result.fold((errors) => errors.length, (_) => 0);
+    final errorCount2 = result2.fold((errors) => errors.length, (_) => 0);
+    assert(result != null);
+    assert(result.isLeft());
+    assert(errorCount1 == 2);
+    assert(errorCount1 < errorCount2);
+  });
+
+  test('bypasses validator when chaining a ignoreWhen clause', () {
+    final parentError = Error('some errror');
+    final validator = Verify.error<User>(parentError).ignoreNull();
+    final result = validator.verify(null);
+    assert(result.isRight());
+  });
+
+  test('bypasses checkField when focused subfield is null', () {
+    final errorValidator = Verify.error<String>(Error('is null'));
+    final tUser = User(null, null, 23);
+    final validator =
+        Verify.valid(tUser).checkField((user) => user.phone, errorValidator);
+    final result = validator.verify(tUser);
+    assert(result.isRight());
   });
 }

@@ -1,5 +1,5 @@
-## [1.0.1] - Changelog
+## [1.0.2] - Changelog
 
-- Added codecov
-- Fixed library placement 
-- Updated docs.
+- Added ignoreWhen, ignoreNull to bypass validators
+- Added shorthands for accesing the 
+- Fixed checkField to these should have a cascading/short-circuit nature (Errors are not summed).
