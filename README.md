@@ -33,10 +33,10 @@ for Dart versions >= 2.6
 
 ## Features
 
-- Completely extensible (create your own combinators, validator primatives, etc)
+- Completely extensible (create your own combinators, validator primitives, etc)
 - Flexible Verify is an extension based API (There is not single class created its all pure functions)
 - Customizable (Define you own error types) organize validators how ever you want
-- Plays well with bloc
+- Bloc friendly (See [examples](https://github.com/DanielCardonaRojas/verify/tree/master/example) for a concrete implementation)
 
 ## Usage
 
@@ -49,7 +49,7 @@ A Validator is just a simple function alias:
 typedef Validator<S, T> = Either<List<ValidationError>, T> Function(S subject);
 ```
 
-So you can create your own validator by just specifying a function for exmple:
+So you can create your own validator by just specifying a function for example:
 
 ```dart
 final Validator_<String> emailValidator = (String email) {
@@ -106,7 +106,8 @@ class User extends Equatable {
 }
 ```
 
-Additional checks can be performed on the object and its fields using `check` and `checkField`
+Additional checks can be performed on the object and its fields by chaining a series of `check` 
+and `checkField` methods.
 
 ```dart
 final userValidator = Verify.empty<User>()
@@ -117,14 +118,69 @@ final someUser = User('','', 25);
 final Either<List<Error>, User> validationResult = userValidator.verify(someUser);
 ```
 
+### Run a validator
+
+Running a validator is a simple as passing in a parameter since its just a function.
+To be a bit more eloquent a `verify` method is provided, this method is special because besides 
+forwarding the argument to the calling validator it can also be used to filter the error list and 
+have it cast to a specific error type. Just supply a specific type parameter.
+
+
+```dart
+final signUpValidation = Verify.subject<SignUpState>();
+final errors = signUpValidation
+    .verify<SignUpError>(newState) // Either<List<SignUpError>, SignUpState>
+```
 ### Built in validators
 
 Verify doesn't come with many built in validators, because they are so simple to create.
 
-But here are a few that are included out of the box:
+It does come with some regex shorthands.
 
 ```dart
     final validator = RegExp(r"(^\d+$)") // Validator<String, int>
         .matchOr(Error('not just digits'))
         .map((str) => int.tryParse(str));
 ```
+
+### Form validation
+
+Often times you will have modeled your error type similar to: 
+
+```dart
+enum FormField {
+  email,
+  password,
+  passwordConfirmation,
+}
+
+class SignUpError extends ValidationError {
+  final String message;
+  final FormField field;
+
+  SignUpError(this.message, {@required this.field});
+
+  @override
+  String get errorDescription => message;
+}
+```
+
+In these scenarios its convenient to be able to group errors by field.
+
+The solution verify provides for this is: 
+
+```dart
+final validator = Verify.inOrder<SignUpFormState>([
+  validateMail,
+  validatePassword,
+  validateConfirmation,
+]);
+
+final Map<FormField, SignUpError> errorMap = validator
+    .verify<SignUpError>(someState)
+    .groupedErrorsBy((error) => error.field);
+```
+
+This way you have quick access to errors segmented by field.
+
+

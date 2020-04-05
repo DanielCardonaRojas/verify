@@ -6,6 +6,7 @@ import 'package:meta/meta.dart';
 import 'package:collection/collection.dart';
 
 import 'enumerated_error.dart';
+import 'product_error.dart';
 import 'user.dart';
 
 class ValidateString {
@@ -350,5 +351,57 @@ void main() {
         Verify.valid(tUser).checkField((user) => user.phone, errorValidator);
     final result = validator.verify(tUser);
     assert(result.isRight());
+  });
+
+  test('inOrder returns first encountered error', () {
+    final error1 = Verify.error<int>(Field1Error());
+    final error2 = Verify.error<int>(Field1Error());
+    final valid1 = Verify.valid<int>(1);
+
+    final validator = Verify.inOrder([
+      valid1,
+      error1,
+      error2,
+    ]);
+
+    final result = validator.verify(9);
+    final errorCount = result.fold((errors) => errors.length, (_) => 0);
+    assert(result != null);
+    assert(result.isLeft());
+    assert(errorCount == 1);
+  });
+
+  test('inOrder works on single element list', () {
+    final valid1 = Verify.valid<int>(1);
+
+    final validator = Verify.inOrder([
+      valid1,
+    ]);
+
+    final result = validator.verify(9);
+    assert(result != null);
+    assert(result.isRight());
+    expect(result, Right(1));
+  });
+
+  group('product form error validation', () {
+    test('groups errors type field type', () {
+      final field1Error1 = ProductError('error1', field: ProductField.field1);
+      final field1Error2 = ProductError('error2', field: ProductField.field1);
+      final field2Error1 = ProductError('error1', field: ProductField.field2);
+
+      final validator = Verify.all<int>([
+        Verify.error(field1Error1),
+        Verify.error(field1Error2),
+        Verify.error(field2Error1),
+      ]);
+
+      final errorMap = validator
+          .verify<ProductError>(9)
+          .groupedErrorsBy((error) => error.field);
+      assert(errorMap.keys.length == 2);
+      assert(errorMap[ProductField.field1].length == 2);
+      assert(errorMap[ProductField.field2].length == 1);
+    });
   });
 }

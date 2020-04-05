@@ -1,8 +1,23 @@
-name: example
+name: verify_example
+description: A new Flutter project.
+
+version: 1.0.0+1
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
+  flutter:
+    sdk: flutter
+  freezed_annotation: ^0.7.1
+  flutter_bloc:
   verify:
     path: ../
+
+dev_dependencies:
+  freezed: ^0.9.2
+  json_serializable: ^3.2.5
+  build_runner:
+
+flutter:
+  uses-material-design: true

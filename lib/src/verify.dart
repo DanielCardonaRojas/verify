@@ -25,6 +25,8 @@ typedef Selector<S, F> = F Function(S subject);
 /// All the methods in this scope are static
 extension Verify on Validator {
   /// Creates an always succeding validator
+  ///
+  /// Ignores input and always returns the provided value.
   static Validator_<S> valid<S>(S subject) {
     return (_) => Right(subject);
   }
@@ -36,6 +38,11 @@ extension Verify on Validator {
 
   /// Creates a validator that has yet to attach validation logic.
   static Validator_<S> empty<S>() {
+    return (S input) => Right(input);
+  }
+
+  /// Creates a validator that has yet to attach validation logic.
+  static Validator_<S> subject<S>() {
     return (S input) => Right(input);
   }
 
@@ -57,11 +64,20 @@ extension Verify on Validator {
     return (S input) => Right(mapping(input));
   }
 
-  /// Creates a new validator by composing a list of validators
+  /// Creates a new validator by merging a list of validators
   ///
-  /// Validation errors preserve the order of the validator list
-  static Validator<S, T> all<S, T>(List<Validator<S, T>> verifications) {
-    return _verifyAll<S, T>(verifications);
+  /// Composition is parallel (All validators are fed the same input)
+  /// Returns sum of errors of all failing validator errors, or the input.
+  /// Note: Transformations performed by the validators are discarded as composition is parallel.
+  static Validator_<S> all<S>(List<Validator_<S>> verifications) {
+    return _verifyAll<S>(verifications);
+  }
+
+  /// Creates a new validator by sequencing validators
+  ///
+  /// returns errors with first failing validator or succeeds if all validators succeed.
+  static Validator_<S> inOrder<S>(List<Validator_<S>> validations) {
+    return validations.reduce((lhs, rhs) => _join(lhs, rhs));
   }
 }
 
@@ -108,9 +124,10 @@ extension VerifyProperties<S> on Validator_<S> {
 ///
 /// Scope for all instance methods
 extension ValidatorUtils<S, T> on Validator<S, T> {
-  /// Returns the next error that successfully casts to ErrorType
+  /// Runs the validator on the supplied subject.
   ///
-  /// Otherwise returns null.
+  /// When supplied a type parameter the error list will be filtered
+  /// to all errors that have the given type.
   Either<List<ErrorType>, T> verify<ErrorType extends ValidationError>(
       S subject) {
     return this(subject).leftMap((errors) {
@@ -130,12 +147,13 @@ extension ValidatorUtils<S, T> on Validator<S, T> {
     );
   }
 
-  /// Transforms the input of the validator by running the provided function.
+  /// Transforms the ouput of the validator by running the provided function.
   /// Leaving the validation logic untouched.
+  /// returns validator with coerced output.
   Validator<S, O> map<O>(Function1<T, O> transform) {
     return (S input) {
-      final eitherErrorOrInput = this(input);
-      return eitherErrorOrInput.map((value) {
+      final eitherErrorOrResult = this(input);
+      return eitherErrorOrResult.map((value) {
         return transform(value);
       });
     };
@@ -178,8 +196,8 @@ extension ValidatorUtils<S, T> on Validator<S, T> {
   }
 }
 
-Validator<S, T> _verifyAll<S, T>(List<Validator<S, T>> verifications) {
-  return (s) {
+Validator_<S> _verifyAll<S>(List<Validator_<S>> verifications) {
+  return (S s) {
     final list = verifications.map((v) => v(s)).toList();
 
     final List<ValidationError> errors = [];
@@ -189,7 +207,7 @@ Validator<S, T> _verifyAll<S, T>(List<Validator<S, T>> verifications) {
     }
 
     if (errors.isEmpty) {
-      return Right(s as T);
+      return Right(s);
     } else {
       return Left(errors);
     }
@@ -237,8 +255,37 @@ Validator_<S> _ignoreNull<S>(Validator_<S> validator) {
   return _ignoreWhen((S input) => input == null, validator);
 }
 
+/// Extensions to facilitate manipulating validation results.
 extension ValidationResult<T, E extends ValidationError> on Either<List<E>, T> {
   E get firstError {
     return fold((errors) => errors.first, (_) => null);
+  }
+
+  /// Returns a map of grouped validatiton error.
+  ///
+  /// The provided selector must be a the field in the provided error that uniquely
+  /// identifies the corresponding form field.
+  Map<K, List<E>> groupedErrorsBy<K>(Selector<E, K> tagSelector) {
+    return fold((errors) {
+      final Map<K, List<E>> map = {};
+
+      for (final err in errors) {
+        final tag = tagSelector(err);
+        final list = map[tag];
+        list?.add(err);
+        map[tag] = list ?? [err];
+      }
+      return map;
+    }, (_) => {});
+  }
+}
+
+extension MapErrorsToString<K, E extends ValidationError> on Map<K, List<E>> {
+  Map<K, List<String>> get messages {
+    return this.map((key, errorsList) {
+      final errorMessages =
+          errorsList.map((error) => error.errorDescription).toList();
+      return MapEntry(key, errorMessages);
+    });
   }
 }
