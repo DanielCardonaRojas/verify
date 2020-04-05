@@ -1,7 +1,7 @@
-## [1.0.3] - Changelog
+## [1.1.0] - Changelog
 
-- Added ignoreWhen, ignoreNull to bypass validators
-- Added shorthands for accesing the firstError and the valided input
-- Modified checkField behaviour to ignore failures if field is null.
-- Added filtering options by specifying type parameter to verify
-- Removed equatable dependency
+- Added example with bloc and freezed.
+- Better support for form validation enabling grouped errors by field.
+- Add inOrder sequenced composition. 
+- Fix all definition
+- Updated documentation.
