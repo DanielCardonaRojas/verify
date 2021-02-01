@@ -109,6 +109,27 @@ void main() {
     assert(errors.first == error2);
   });
 
+  test('join only accumulates on error at a time', () {
+    final numberValidator = Verify.subject<int>()
+        .then(Verify.property(
+          (subject) => subject % 2 == 0,
+          error: Error('not even'),
+        ))
+        .then(Verify.property(
+          (subject) => subject >= 10,
+          error: Error('single digit'),
+        ));
+
+    final errors2 = numberValidator.errors(3);
+    final errors = numberValidator.errors(4);
+
+    // Since then is join and performs sequential verification we expect the first error
+    // to emerge but no the second.
+    assert(errors.length == 1);
+    assert(errors2.length == 1);
+    assert(numberValidator.errors(14).isEmpty);
+  });
+
   test(
       'Validator<S,T> >>+= Validator<T, O> returns Validator<S,O> that combines both mappings',
       () {

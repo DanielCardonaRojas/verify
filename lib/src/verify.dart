@@ -98,6 +98,9 @@ extension VerifyProperties<S> on Validator_<S> {
   ///
   /// If both the calling validator and the additional check fail,
   /// the error produced by the calling is returned.
+  /// Note: checkField is different from check in that it ignore the verification if
+  /// the focused field is null. This is common when validating forms in which null represents
+  /// a field which has not being visited.
   Validator_<S> checkField<F>(
       Selector<S, F> selector, Validator_<F> verification) {
     final bypassingValidation = _ignoreNull(verification);
@@ -136,6 +139,18 @@ extension ValidatorUtils<S, T> on Validator<S, T> {
     });
   }
 
+  /// Runs the validator and returns a list of errors
+  ///
+  /// When supplied a type parameter the error list will be filtered
+  /// to all errors that have the given type.
+  /// This is handy when just error information is required.
+  List<ErrorType> errors<ErrorType extends ValidationError>(S subject) {
+    return this(subject).leftMap((errors) {
+      final Iterable<ErrorType> filtered = errors.whereType();
+      return filtered.toList();
+    }).fold((l) => l, (r) => const []);
+  }
+
   /// Returns the validated and transformed subject
   /// If validation of subject fails returns null
   T validated(S subject) {
@@ -163,6 +178,13 @@ extension ValidatorUtils<S, T> on Validator<S, T> {
   ///
   /// Equivalent to flatMap((_) => validator)
   Validator<S, O> join<O>(Validator<T, O> validator) {
+    return _join(this, validator);
+  }
+
+  /// Chains a validation to the output
+  ///
+  /// Equivalent to join
+  Validator<S, O> then<O>(Validator<T, O> validator) {
     return _join(this, validator);
   }
 
@@ -282,7 +304,7 @@ extension ValidationResult<T, E extends ValidationError> on Either<List<E>, T> {
 
 extension MapErrorsToString<K, E extends ValidationError> on Map<K, List<E>> {
   Map<K, List<String>> get messages {
-    return this.map((key, errorsList) {
+    return map((key, errorsList) {
       final errorMessages =
           errorsList.map((error) => error.errorDescription).toList();
       return MapEntry(key, errorMessages);

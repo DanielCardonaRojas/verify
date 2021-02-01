@@ -118,6 +118,10 @@ final someUser = User('','', 25);
 final Either<List<Error>, User> validationResult = userValidator.verify(someUser);
 ```
 
+> Note: The difference between check and checkField is that the later ignore the verification when the value is null,
+> this will likely change in next version supporting null safety.
+
+
 ### Run a validator
 
 Running a validator is a simple as passing in a parameter since its just a function.
@@ -179,6 +183,25 @@ final validator = Verify.inOrder<SignUpFormState>([
 final Map<FormField, SignUpError> errorMap = validator
     .verify<SignUpError>(someState)
     .groupedErrorsBy((error) => error.field);
+```
+
+## Sequencing
+
+A slightly different API can be used to achieve the same results as the `inOrder` composition function.
+
+```dart
+final numberValidator = Verify.subject<int>()
+  .then(Verify.property(
+    (subject) => subject % 2 == 0,
+    error: Error('not even'),
+  ))
+  .then(Verify.property(
+    (subject) => subject >= 10,
+    error: Error('single digit'),
+  ));
+
+final errors2 = numberValidator.errors(3); // yields 1 error
+final errors = numberValidator.errors(4); // yields 1 error
 ```
 
 This way you have quick access to errors segmented by field.
