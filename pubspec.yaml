@@ -1,17 +1,22 @@
 name: verify
 description: Validations made simple. An extension based validation DSL.
-version: 1.1.4
+version: 1.2.0
 homepage: https://github.com/DanielCardonaRojas/verify
 
 environment:
-  sdk: ">=2.6.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  dartz: ^0.8.6
-  meta: ^1.1.8
+  dartz: '>=0.10.0-nullsafety.1 <1.0.0'
+  meta: ^1.3.0
 
 dev_dependencies:
-  equatable: ^1.0.0
-  lint: ^1.0.0
-  test_coverage: ^0.4.1
-  test: ^1.14.2
+  equatable: ^2.0.0
+  lint: ^1.5.3
+  test_coverage: ^0.5.0
+  test: ^1.16.7
+
+dependency_overrides:
+  args: ^2.0.0
+  coverage: ^1.0.1
+  glob: ^2.0.0

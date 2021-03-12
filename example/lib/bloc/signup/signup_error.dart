@@ -11,7 +11,7 @@ class SignUpError implements ValidationError {
   final SignUpFormField field;
   final String message;
 
-  SignUpError({@required this.field, @required this.message});
+  SignUpError({required this.field, required this.message});
 
   @override
   String get errorDescription => message;

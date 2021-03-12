@@ -11,7 +11,7 @@ class ProductError extends ValidationError {
   final String message;
   final ProductField field;
 
-  ProductError(this.message, {@required this.field});
+  ProductError(this.message, {required this.field});
 
   @override
   String get errorDescription => message;

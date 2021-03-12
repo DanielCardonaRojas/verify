@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides
 
 part of 'signup_event.dart';
 
@@ -7,39 +7,12 @@ part of 'signup_event.dart';
 // FreezedGenerator
 // **************************************************************************
 
-mixin _$SignUpEvent {
-  @optionalTypeArgs
-  Result when<Result extends Object>({
-    @required Result setEmail(String email),
-    @required Result setPassword(String password),
-    @required Result setPasswordConfirmation(String password),
-  });
+T _$identity<T>(T value) => value;
 
-  @optionalTypeArgs
-  Result maybeWhen<Result extends Object>({
-    Result setEmail(String email),
-    Result setPassword(String password),
-    Result setPasswordConfirmation(String password),
-    @required Result orElse(),
-  });
+final _privateConstructorUsedError = UnsupportedError(
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
-  @optionalTypeArgs
-  Result map<Result extends Object>({
-    @required Result setEmail(SignUpSetEmail value),
-    @required Result setPassword(SignUpSetPassword value),
-    @required
-        Result setPasswordConfirmation(SignUpSetPasswordConfirmation value),
-  });
-
-  @optionalTypeArgs
-  Result maybeMap<Result extends Object>({
-    Result setEmail(SignUpSetEmail value),
-    Result setPassword(SignUpSetPassword value),
-    Result setPasswordConfirmation(SignUpSetPasswordConfirmation value),
-    @required Result orElse(),
-  });
-}
-
+/// @nodoc
 class _$SignUpEventTearOff {
   const _$SignUpEventTearOff();
 
@@ -62,10 +35,95 @@ class _$SignUpEventTearOff {
   }
 }
 
+/// @nodoc
 const $SignUpEvent = _$SignUpEventTearOff();
 
+/// @nodoc
+mixin _$SignUpEvent {
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) setEmail,
+    required TResult Function(String password) setPassword,
+    required TResult Function(String password) setPasswordConfirmation,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? setEmail,
+    TResult Function(String password)? setPassword,
+    TResult Function(String password)? setPasswordConfirmation,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(SignUpSetEmail value) setEmail,
+    required TResult Function(SignUpSetPassword value) setPassword,
+    required TResult Function(SignUpSetPasswordConfirmation value)
+        setPasswordConfirmation,
+  }) =>
+      throw _privateConstructorUsedError;
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(SignUpSetEmail value)? setEmail,
+    TResult Function(SignUpSetPassword value)? setPassword,
+    TResult Function(SignUpSetPasswordConfirmation value)?
+        setPasswordConfirmation,
+    required TResult orElse(),
+  }) =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SignUpEventCopyWith<$Res> {
+  factory $SignUpEventCopyWith(
+          SignUpEvent value, $Res Function(SignUpEvent) then) =
+      _$SignUpEventCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class _$SignUpEventCopyWithImpl<$Res> implements $SignUpEventCopyWith<$Res> {
+  _$SignUpEventCopyWithImpl(this._value, this._then);
+
+  final SignUpEvent _value;
+  // ignore: unused_field
+  final $Res Function(SignUpEvent) _then;
+}
+
+/// @nodoc
+abstract class $SignUpSetEmailCopyWith<$Res> {
+  factory $SignUpSetEmailCopyWith(
+          SignUpSetEmail value, $Res Function(SignUpSetEmail) then) =
+      _$SignUpSetEmailCopyWithImpl<$Res>;
+  $Res call({String email});
+}
+
+/// @nodoc
+class _$SignUpSetEmailCopyWithImpl<$Res> extends _$SignUpEventCopyWithImpl<$Res>
+    implements $SignUpSetEmailCopyWith<$Res> {
+  _$SignUpSetEmailCopyWithImpl(
+      SignUpSetEmail _value, $Res Function(SignUpSetEmail) _then)
+      : super(_value, (v) => _then(v as SignUpSetEmail));
+
+  @override
+  SignUpSetEmail get _value => super._value as SignUpSetEmail;
+
+  @override
+  $Res call({
+    Object? email = freezed,
+  }) {
+    return _then(SignUpSetEmail(
+      email == freezed
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
 class _$SignUpSetEmail implements SignUpSetEmail {
-  const _$SignUpSetEmail(this.email) : assert(email != null);
+  const _$SignUpSetEmail(this.email);
 
   @override
   final String email;
@@ -87,37 +145,29 @@ class _$SignUpSetEmail implements SignUpSetEmail {
   int get hashCode =>
       runtimeType.hashCode ^ const DeepCollectionEquality().hash(email);
 
+  @JsonKey(ignore: true)
   @override
-  _$SignUpSetEmail copyWith({
-    Object email = freezed,
-  }) {
-    return _$SignUpSetEmail(
-      email == freezed ? this.email : email as String,
-    );
-  }
+  $SignUpSetEmailCopyWith<SignUpSetEmail> get copyWith =>
+      _$SignUpSetEmailCopyWithImpl<SignUpSetEmail>(this, _$identity);
 
   @override
   @optionalTypeArgs
-  Result when<Result extends Object>({
-    @required Result setEmail(String email),
-    @required Result setPassword(String password),
-    @required Result setPasswordConfirmation(String password),
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) setEmail,
+    required TResult Function(String password) setPassword,
+    required TResult Function(String password) setPasswordConfirmation,
   }) {
-    assert(setEmail != null);
-    assert(setPassword != null);
-    assert(setPasswordConfirmation != null);
     return setEmail(email);
   }
 
   @override
   @optionalTypeArgs
-  Result maybeWhen<Result extends Object>({
-    Result setEmail(String email),
-    Result setPassword(String password),
-    Result setPasswordConfirmation(String password),
-    @required Result orElse(),
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? setEmail,
+    TResult Function(String password)? setPassword,
+    TResult Function(String password)? setPasswordConfirmation,
+    required TResult orElse(),
   }) {
-    assert(orElse != null);
     if (setEmail != null) {
       return setEmail(email);
     }
@@ -126,27 +176,24 @@ class _$SignUpSetEmail implements SignUpSetEmail {
 
   @override
   @optionalTypeArgs
-  Result map<Result extends Object>({
-    @required Result setEmail(SignUpSetEmail value),
-    @required Result setPassword(SignUpSetPassword value),
-    @required
-        Result setPasswordConfirmation(SignUpSetPasswordConfirmation value),
+  TResult map<TResult extends Object?>({
+    required TResult Function(SignUpSetEmail value) setEmail,
+    required TResult Function(SignUpSetPassword value) setPassword,
+    required TResult Function(SignUpSetPasswordConfirmation value)
+        setPasswordConfirmation,
   }) {
-    assert(setEmail != null);
-    assert(setPassword != null);
-    assert(setPasswordConfirmation != null);
     return setEmail(this);
   }
 
   @override
   @optionalTypeArgs
-  Result maybeMap<Result extends Object>({
-    Result setEmail(SignUpSetEmail value),
-    Result setPassword(SignUpSetPassword value),
-    Result setPasswordConfirmation(SignUpSetPasswordConfirmation value),
-    @required Result orElse(),
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(SignUpSetEmail value)? setEmail,
+    TResult Function(SignUpSetPassword value)? setPassword,
+    TResult Function(SignUpSetPasswordConfirmation value)?
+        setPasswordConfirmation,
+    required TResult orElse(),
   }) {
-    assert(orElse != null);
     if (setEmail != null) {
       return setEmail(this);
     }
@@ -157,13 +204,47 @@ class _$SignUpSetEmail implements SignUpSetEmail {
 abstract class SignUpSetEmail implements SignUpEvent {
   const factory SignUpSetEmail(String email) = _$SignUpSetEmail;
 
-  String get email;
-
-  SignUpSetEmail copyWith({String email});
+  String get email => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SignUpSetEmailCopyWith<SignUpSetEmail> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
+/// @nodoc
+abstract class $SignUpSetPasswordCopyWith<$Res> {
+  factory $SignUpSetPasswordCopyWith(
+          SignUpSetPassword value, $Res Function(SignUpSetPassword) then) =
+      _$SignUpSetPasswordCopyWithImpl<$Res>;
+  $Res call({String password});
+}
+
+/// @nodoc
+class _$SignUpSetPasswordCopyWithImpl<$Res>
+    extends _$SignUpEventCopyWithImpl<$Res>
+    implements $SignUpSetPasswordCopyWith<$Res> {
+  _$SignUpSetPasswordCopyWithImpl(
+      SignUpSetPassword _value, $Res Function(SignUpSetPassword) _then)
+      : super(_value, (v) => _then(v as SignUpSetPassword));
+
+  @override
+  SignUpSetPassword get _value => super._value as SignUpSetPassword;
+
+  @override
+  $Res call({
+    Object? password = freezed,
+  }) {
+    return _then(SignUpSetPassword(
+      password == freezed
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
 class _$SignUpSetPassword implements SignUpSetPassword {
-  const _$SignUpSetPassword(this.password) : assert(password != null);
+  const _$SignUpSetPassword(this.password);
 
   @override
   final String password;
@@ -186,37 +267,29 @@ class _$SignUpSetPassword implements SignUpSetPassword {
   int get hashCode =>
       runtimeType.hashCode ^ const DeepCollectionEquality().hash(password);
 
+  @JsonKey(ignore: true)
   @override
-  _$SignUpSetPassword copyWith({
-    Object password = freezed,
-  }) {
-    return _$SignUpSetPassword(
-      password == freezed ? this.password : password as String,
-    );
-  }
+  $SignUpSetPasswordCopyWith<SignUpSetPassword> get copyWith =>
+      _$SignUpSetPasswordCopyWithImpl<SignUpSetPassword>(this, _$identity);
 
   @override
   @optionalTypeArgs
-  Result when<Result extends Object>({
-    @required Result setEmail(String email),
-    @required Result setPassword(String password),
-    @required Result setPasswordConfirmation(String password),
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) setEmail,
+    required TResult Function(String password) setPassword,
+    required TResult Function(String password) setPasswordConfirmation,
   }) {
-    assert(setEmail != null);
-    assert(setPassword != null);
-    assert(setPasswordConfirmation != null);
     return setPassword(password);
   }
 
   @override
   @optionalTypeArgs
-  Result maybeWhen<Result extends Object>({
-    Result setEmail(String email),
-    Result setPassword(String password),
-    Result setPasswordConfirmation(String password),
-    @required Result orElse(),
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? setEmail,
+    TResult Function(String password)? setPassword,
+    TResult Function(String password)? setPasswordConfirmation,
+    required TResult orElse(),
   }) {
-    assert(orElse != null);
     if (setPassword != null) {
       return setPassword(password);
     }
@@ -225,27 +298,24 @@ class _$SignUpSetPassword implements SignUpSetPassword {
 
   @override
   @optionalTypeArgs
-  Result map<Result extends Object>({
-    @required Result setEmail(SignUpSetEmail value),
-    @required Result setPassword(SignUpSetPassword value),
-    @required
-        Result setPasswordConfirmation(SignUpSetPasswordConfirmation value),
+  TResult map<TResult extends Object?>({
+    required TResult Function(SignUpSetEmail value) setEmail,
+    required TResult Function(SignUpSetPassword value) setPassword,
+    required TResult Function(SignUpSetPasswordConfirmation value)
+        setPasswordConfirmation,
   }) {
-    assert(setEmail != null);
-    assert(setPassword != null);
-    assert(setPasswordConfirmation != null);
     return setPassword(this);
   }
 
   @override
   @optionalTypeArgs
-  Result maybeMap<Result extends Object>({
-    Result setEmail(SignUpSetEmail value),
-    Result setPassword(SignUpSetPassword value),
-    Result setPasswordConfirmation(SignUpSetPasswordConfirmation value),
-    @required Result orElse(),
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(SignUpSetEmail value)? setEmail,
+    TResult Function(SignUpSetPassword value)? setPassword,
+    TResult Function(SignUpSetPasswordConfirmation value)?
+        setPasswordConfirmation,
+    required TResult orElse(),
   }) {
-    assert(orElse != null);
     if (setPassword != null) {
       return setPassword(this);
     }
@@ -256,14 +326,50 @@ class _$SignUpSetPassword implements SignUpSetPassword {
 abstract class SignUpSetPassword implements SignUpEvent {
   const factory SignUpSetPassword(String password) = _$SignUpSetPassword;
 
-  String get password;
-
-  SignUpSetPassword copyWith({String password});
+  String get password => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SignUpSetPasswordCopyWith<SignUpSetPassword> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
+/// @nodoc
+abstract class $SignUpSetPasswordConfirmationCopyWith<$Res> {
+  factory $SignUpSetPasswordConfirmationCopyWith(
+          SignUpSetPasswordConfirmation value,
+          $Res Function(SignUpSetPasswordConfirmation) then) =
+      _$SignUpSetPasswordConfirmationCopyWithImpl<$Res>;
+  $Res call({String password});
+}
+
+/// @nodoc
+class _$SignUpSetPasswordConfirmationCopyWithImpl<$Res>
+    extends _$SignUpEventCopyWithImpl<$Res>
+    implements $SignUpSetPasswordConfirmationCopyWith<$Res> {
+  _$SignUpSetPasswordConfirmationCopyWithImpl(
+      SignUpSetPasswordConfirmation _value,
+      $Res Function(SignUpSetPasswordConfirmation) _then)
+      : super(_value, (v) => _then(v as SignUpSetPasswordConfirmation));
+
+  @override
+  SignUpSetPasswordConfirmation get _value =>
+      super._value as SignUpSetPasswordConfirmation;
+
+  @override
+  $Res call({
+    Object? password = freezed,
+  }) {
+    return _then(SignUpSetPasswordConfirmation(
+      password == freezed
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
 class _$SignUpSetPasswordConfirmation implements SignUpSetPasswordConfirmation {
-  const _$SignUpSetPasswordConfirmation(this.password)
-      : assert(password != null);
+  const _$SignUpSetPasswordConfirmation(this.password);
 
   @override
   final String password;
@@ -286,37 +392,30 @@ class _$SignUpSetPasswordConfirmation implements SignUpSetPasswordConfirmation {
   int get hashCode =>
       runtimeType.hashCode ^ const DeepCollectionEquality().hash(password);
 
+  @JsonKey(ignore: true)
   @override
-  _$SignUpSetPasswordConfirmation copyWith({
-    Object password = freezed,
-  }) {
-    return _$SignUpSetPasswordConfirmation(
-      password == freezed ? this.password : password as String,
-    );
-  }
+  $SignUpSetPasswordConfirmationCopyWith<SignUpSetPasswordConfirmation>
+      get copyWith => _$SignUpSetPasswordConfirmationCopyWithImpl<
+          SignUpSetPasswordConfirmation>(this, _$identity);
 
   @override
   @optionalTypeArgs
-  Result when<Result extends Object>({
-    @required Result setEmail(String email),
-    @required Result setPassword(String password),
-    @required Result setPasswordConfirmation(String password),
+  TResult when<TResult extends Object?>({
+    required TResult Function(String email) setEmail,
+    required TResult Function(String password) setPassword,
+    required TResult Function(String password) setPasswordConfirmation,
   }) {
-    assert(setEmail != null);
-    assert(setPassword != null);
-    assert(setPasswordConfirmation != null);
     return setPasswordConfirmation(password);
   }
 
   @override
   @optionalTypeArgs
-  Result maybeWhen<Result extends Object>({
-    Result setEmail(String email),
-    Result setPassword(String password),
-    Result setPasswordConfirmation(String password),
-    @required Result orElse(),
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String email)? setEmail,
+    TResult Function(String password)? setPassword,
+    TResult Function(String password)? setPasswordConfirmation,
+    required TResult orElse(),
   }) {
-    assert(orElse != null);
     if (setPasswordConfirmation != null) {
       return setPasswordConfirmation(password);
     }
@@ -325,27 +424,24 @@ class _$SignUpSetPasswordConfirmation implements SignUpSetPasswordConfirmation {
 
   @override
   @optionalTypeArgs
-  Result map<Result extends Object>({
-    @required Result setEmail(SignUpSetEmail value),
-    @required Result setPassword(SignUpSetPassword value),
-    @required
-        Result setPasswordConfirmation(SignUpSetPasswordConfirmation value),
+  TResult map<TResult extends Object?>({
+    required TResult Function(SignUpSetEmail value) setEmail,
+    required TResult Function(SignUpSetPassword value) setPassword,
+    required TResult Function(SignUpSetPasswordConfirmation value)
+        setPasswordConfirmation,
   }) {
-    assert(setEmail != null);
-    assert(setPassword != null);
-    assert(setPasswordConfirmation != null);
     return setPasswordConfirmation(this);
   }
 
   @override
   @optionalTypeArgs
-  Result maybeMap<Result extends Object>({
-    Result setEmail(SignUpSetEmail value),
-    Result setPassword(SignUpSetPassword value),
-    Result setPasswordConfirmation(SignUpSetPasswordConfirmation value),
-    @required Result orElse(),
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(SignUpSetEmail value)? setEmail,
+    TResult Function(SignUpSetPassword value)? setPassword,
+    TResult Function(SignUpSetPasswordConfirmation value)?
+        setPasswordConfirmation,
+    required TResult orElse(),
   }) {
-    assert(orElse != null);
     if (setPasswordConfirmation != null) {
       return setPasswordConfirmation(this);
     }
@@ -357,7 +453,8 @@ abstract class SignUpSetPasswordConfirmation implements SignUpEvent {
   const factory SignUpSetPasswordConfirmation(String password) =
       _$SignUpSetPasswordConfirmation;
 
-  String get password;
-
-  SignUpSetPasswordConfirmation copyWith({String password});
+  String get password => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SignUpSetPasswordConfirmationCopyWith<SignUpSetPasswordConfirmation>
+      get copyWith => throw _privateConstructorUsedError;
 }

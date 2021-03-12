@@ -53,7 +53,7 @@ extension Verify on Validator {
 
   /// Creates a validator frmo predicate
   static Validator_<S> property<S>(Predicate<S> predicate,
-      {@required ValidationError error}) {
+      {required ValidationError error}) {
     return (s) => predicate(s) ? Right(s) : Left([error]);
   }
 
@@ -88,7 +88,7 @@ extension VerifyProperties<S> on Validator_<S> {
   /// If both the calling validator and the additional check fail, the
   /// error produced by the calling is returned.
   Validator_<S> check(Predicate<S> predicate,
-      {@required ValidationError error}) {
+      {required ValidationError error}) {
     final Validator_<S> predicateValidator =
         (S s) => predicate(s) ? Right(s) : Left([error]);
     return _join(this, predicateValidator);
@@ -153,7 +153,7 @@ extension ValidatorUtils<S, T> on Validator<S, T> {
 
   /// Returns the validated and transformed subject
   /// If validation of subject fails returns null
-  T validated(S subject) {
+  T? validated(S subject) {
     return this(subject).fold(
       (errors) {
         return null;
@@ -279,7 +279,7 @@ Validator_<S> _ignoreNull<S>(Validator_<S> validator) {
 
 /// Extensions to facilitate manipulating validation results.
 extension ValidationResult<T, E extends ValidationError> on Either<List<E>, T> {
-  E get firstError {
+  E? get firstError {
     return fold((errors) => errors.first, (_) => null);
   }
 

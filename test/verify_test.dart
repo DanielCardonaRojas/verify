@@ -11,7 +11,7 @@ import 'user.dart';
 
 class ValidateString {
   static Validator_<String> length(int length,
-      {@required ValidationError error}) {
+      {required ValidationError error}) {
     return Verify.property((s) => s.length == length, error: error);
   }
 }
@@ -83,7 +83,7 @@ void main() {
     final error1 = Error('validation error');
     final error2 = Error('age is required');
     final errorValidator = Verify.error<User>(error1);
-    final ageNotNullValidator = Verify.notNull<int>(error2);
+    final ageNotNullValidator = Verify.notNull<int?>(error2);
     final validator =
         errorValidator.join((user) => ageNotNullValidator.verify(user.age));
     final result = validator.verify(someUser);
@@ -98,7 +98,7 @@ void main() {
     final someUser = User('', '', null);
     final error2 = Error('age is required');
     final userValidator = Verify.valid<User>(someUser);
-    final ageNotNullValidator = Verify.notNull<int>(error2);
+    final ageNotNullValidator = Verify.notNull<int?>(error2);
     final validator =
         userValidator.join((user) => ageNotNullValidator.verify(user.age));
     final result = validator.verify(someUser);
@@ -145,9 +145,9 @@ void main() {
     const user = User('', '1', 25);
 
     final userValidator = Verify.empty<User>()
-        .check((user) => user.phone.isNotEmpty,
+        .check((user) => user.phone!.isNotEmpty,
             error: Error.fromCode(ErrorCode.userPhoneEmpty))
-        .check((user) => user.mail.isNotEmpty && user.mail.contains('@'),
+        .check((user) => user.mail!.isNotEmpty && user.mail!.contains('@'),
             error: Error.fromCode(ErrorCode.userMailFormat));
 
     final result = userValidator.verify(user);
@@ -167,8 +167,8 @@ void main() {
         error: Error('email has to contain @'));
 
     final userValidator = Verify.error<User>(Error('user name not valid'))
-        .checkField((user) => user.phone, emptyStringValidator)
-        .checkField((user) => user.mail, emailValidator);
+        .checkField((user) => user.phone!, emptyStringValidator)
+        .checkField((user) => user.mail!, emailValidator);
 
     final result = userValidator.verify(user);
     final errors = result.fold((errors) => errors.length, (_) => 0);
@@ -247,7 +247,7 @@ void main() {
     final parentError = Error('some errror');
     final tUser = User('', '', -1);
     final validator = Verify.error<User>(parentError)
-        .check((user) => user.age > 0, error: Error('age must be positive'));
+        .check((user) => user.age! > 0, error: Error('age must be positive'));
 
     final result = validator.verify(tUser);
     final errorCount = result.fold((errors) => errors.length, (_) => 0);
@@ -260,7 +260,7 @@ void main() {
     final parentError = Error('some errror');
     final tUser = User('', '', 10);
     final validator = Verify.error<User>(parentError)
-        .check((user) => user.age > 0, error: Error('age must be positive'));
+        .check((user) => user.age! > 0, error: Error('age must be positive'));
 
     final result = validator.verify(tUser);
     final errorCount = result.fold((errors) => errors.length, (_) => 0);
@@ -274,7 +274,7 @@ void main() {
     final nestedError = Error('myst be positive');
     final tUser = User('', '', -1);
     final validator = Verify.error<User>(parentError)
-        .check((user) => user.age > 0, error: nestedError);
+        .check((user) => user.age! > 0, error: nestedError);
 
     final result = validator.verify(tUser);
     final errors = result.fold((errors) => errors, (_) => []);
@@ -298,7 +298,7 @@ void main() {
     final nestedError = Error('myst be positive');
     final tUser = User('', '', -1);
     final validator = Verify.error<User>(parentError).checkField(
-        (user) => user.age,
+        (user) => user.age!,
         Verify.property((int age) => age > 0, error: nestedError));
 
     final result = validator.verify(tUser);
@@ -308,9 +308,9 @@ void main() {
 
   test('fails on null', () {
     final tError = Error('cant be null');
-    final dateValidation = Verify.notNull<DateTime>(tError).check(
-      (DateTime date) {
-        final duration = date.difference(DateTime.now());
+    final dateValidation = Verify.notNull<DateTime?>(tError).check(
+      (DateTime? date) {
+        final duration = date!.difference(DateTime.now());
         return duration.inMinutes >= 2;
       },
       error: Error('Doesnt satisfy time constraints'),
@@ -334,7 +334,7 @@ void main() {
 
     final result = validator.verify<Field2Error>(9).firstError;
     assert(result != null);
-    assert(result.errorDescription == Field2Error().errorDescription);
+    assert(result?.errorDescription == Field2Error().errorDescription);
   });
 
   test('verify can filter error list when a generic parameter supplied', () {
@@ -360,13 +360,13 @@ void main() {
 
   test('bypasses validator when chaining a ignoreWhen clause', () {
     final parentError = Error('some errror');
-    final validator = Verify.error<User>(parentError).ignoreNull();
+    final validator = Verify.error<User?>(parentError).ignoreNull();
     final result = validator.verify(null);
     assert(result.isRight());
   });
 
   test('bypasses checkField when focused subfield is null', () {
-    final errorValidator = Verify.error<String>(Error('is null'));
+    final errorValidator = Verify.error<String?>(Error('is null'));
     final tUser = User(null, null, 23);
     final validator =
         Verify.valid(tUser).checkField((user) => user.phone, errorValidator);
@@ -421,8 +421,8 @@ void main() {
           .verify<ProductError>(9)
           .groupedErrorsBy((error) => error.field);
       assert(errorMap.keys.length == 2);
-      assert(errorMap[ProductField.field1].length == 2);
-      assert(errorMap[ProductField.field2].length == 1);
+      assert(errorMap[ProductField.field1]?.length == 2);
+      assert(errorMap[ProductField.field2]?.length == 1);
     });
   });
 }
