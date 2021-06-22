@@ -10,9 +10,9 @@ import 'product_error.dart';
 import 'user.dart';
 
 class ValidateString {
-  static Validator_<String> length(int length,
+  static Validator<String> length(int length,
       {required ValidationError error}) {
-    return Verify.property((s) => s.length == length, error: error);
+    return Verify.that((s) => s.length == length, error: error);
   }
 }
 
@@ -67,7 +67,7 @@ void main() {
       'transforming output type of validator does not have effect on failing validator',
       () {
     final errorValidator = Verify.error<User>(Error('validation error'));
-    final Validator<User, int> transformedValidator =
+    final ValidatorT<User, int> transformedValidator =
         errorValidator.map((_) => 25);
     final result = transformedValidator.verify(tUserGood);
     final result2 = errorValidator.verify(tUserGood);
@@ -111,11 +111,11 @@ void main() {
 
   test('join only accumulates on error at a time', () {
     final numberValidator = Verify.subject<int>()
-        .then(Verify.property(
+        .then(Verify.that(
           (subject) => subject % 2 == 0,
           error: Error('not even'),
         ))
-        .then(Verify.property(
+        .then(Verify.that(
           (subject) => subject >= 10,
           error: Error('single digit'),
         ));
@@ -158,12 +158,11 @@ void main() {
   test('Can validate subfield of model with other validator', () {
     const user = User('', '1', 25);
 
-    final emptyStringValidator = Verify.property(
+    final emptyStringValidator = Verify.that(
         (String string) => string.isNotEmpty,
         error: Error('string cant be empty'));
 
-    final emailValidator = Verify.property(
-        (String email) => email.contains('@'),
+    final emailValidator = Verify.that((String email) => email.contains('@'),
         error: Error('email has to contain @'));
 
     final userValidator = Verify.error<User>(Error('user name not valid'))
@@ -183,7 +182,7 @@ void main() {
 
   test('Can handle errors with onException combinator', () {
     final error = Error('not a proper int');
-    final Validator<String, int> intParsingValidator =
+    final ValidatorT<String, int> intParsingValidator =
         (String str) => Right(int.parse(str));
     final validator = intParsingValidator.onException((_) => error);
     final result = validator.verify('12s');
@@ -299,7 +298,7 @@ void main() {
     final tUser = User('', '', -1);
     final validator = Verify.error<User>(parentError).checkField(
         (user) => user.age!,
-        Verify.property((int age) => age > 0, error: nestedError));
+        Verify.that((int age) => age > 0, error: nestedError));
 
     final result = validator.verify(tUser);
     final errors = result.fold((errors) => errors, (_) => []);
