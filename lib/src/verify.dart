@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:meta/meta.dart';
 import 'package:verify/verify.dart';
 export 'package:dartz/dartz.dart' show Either;
 
@@ -127,7 +126,7 @@ extension VerifyProperties<S> on Validator<S> {
 
   /// Ignore calling validator when input is null.
   Validator<S> ignoreNull() {
-    return _ignoreWhen((S s) => s == null, this);
+    return _ignoreNull(this);
   }
 }
 

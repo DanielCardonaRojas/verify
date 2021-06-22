@@ -6,7 +6,6 @@ linter:
     ambiguous_extension_member_access: false
 analyzer:
   exclude:
-    - test/**
     - example/**
     - pubspec.yaml
 

@@ -2,7 +2,6 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:verify/verify.dart';
 import 'package:test/test.dart';
-import 'package:meta/meta.dart';
 import 'package:collection/collection.dart';
 
 import 'enumerated_error.dart';
@@ -23,7 +22,7 @@ enum ErrorCode {
   userPhoneFormat,
 }
 
-class Error extends ValidationError {
+class Error extends ValidationError with EquatableMixin {
   final String message;
 
   Error(this.message);
@@ -79,7 +78,7 @@ void main() {
   });
 
   test('flatmap does not collect both validator errors', () {
-    final someUser = User('', '', null);
+    const someUser = User('', '', null);
     final error1 = Error('validation error');
     final error2 = Error('age is required');
     final errorValidator = Verify.error<User>(error1);
@@ -95,7 +94,7 @@ void main() {
   });
 
   test('a >>+= b yields errors of b when a succeeds but b fails', () {
-    final someUser = User('', '', null);
+    const someUser = User('', '', null);
     final error2 = Error('age is required');
     final userValidator = Verify.valid<User>(someUser);
     final ageNotNullValidator = Verify.notNull<int?>(error2);
@@ -133,7 +132,6 @@ void main() {
   test(
       'Validator<S,T> >>+= Validator<T, O> returns Validator<S,O> that combines both mappings',
       () {
-    final someString = '';
     final countStringLength = Verify.lift((String str) => str.length);
     final greaterThenOne = Verify.lift((int count) => count > 1);
     final validator = countStringLength.join(greaterThenOne);
@@ -153,6 +151,7 @@ void main() {
     final result = userValidator.verify(user);
     final errors = result.fold((errors) => errors.length, (_) => 0);
     assert(result.isLeft());
+    assert(errors > 0);
   });
 
   test('Can validate subfield of model with other validator', () {
@@ -170,7 +169,6 @@ void main() {
         .checkField((user) => user.mail!, emailValidator);
 
     final result = userValidator.verify(user);
-    final errors = result.fold((errors) => errors.length, (_) => 0);
     assert(result.isLeft());
   });
 
@@ -244,7 +242,7 @@ void main() {
       'performing a failing check on a failing validator returns a single value error list',
       () {
     final parentError = Error('some errror');
-    final tUser = User('', '', -1);
+    const tUser = User('', '', -1);
     final validator = Verify.error<User>(parentError)
         .check((user) => user.age! > 0, error: Error('age must be positive'));
 
@@ -257,7 +255,7 @@ void main() {
       'performing a succeding check on a failing validator returns a single value error list',
       () {
     final parentError = Error('some errror');
-    final tUser = User('', '', 10);
+    const tUser = User('', '', 10);
     final validator = Verify.error<User>(parentError)
         .check((user) => user.age! > 0, error: Error('age must be positive'));
 
@@ -271,7 +269,7 @@ void main() {
       () {
     final parentError = Error('some errror');
     final nestedError = Error('myst be positive');
-    final tUser = User('', '', -1);
+    const tUser = User('', '', -1);
     final validator = Verify.error<User>(parentError)
         .check((user) => user.age! > 0, error: nestedError);
 
@@ -282,7 +280,7 @@ void main() {
   test(
       'performing a failing checkField on a failing validator returns a single value error list',
       () {
-    final tUser = User('', '', -1);
+    const tUser = User('', '', -1);
     final validator = Verify.error<User>(Error('some errror')).checkField(
         (user) => user.age, Verify.error(Error('age must be positive')));
 
@@ -295,7 +293,7 @@ void main() {
       () {
     final parentError = Error('some errror');
     final nestedError = Error('myst be positive');
-    final tUser = User('', '', -1);
+    const tUser = User('', '', -1);
     final validator = Verify.error<User>(parentError).checkField(
         (user) => user.age!,
         Verify.that((int age) => age > 0, error: nestedError));
@@ -351,7 +349,6 @@ void main() {
     final result2 = validator.verify(9);
     final errorCount1 = result.fold((errors) => errors.length, (_) => 0);
     final errorCount2 = result2.fold((errors) => errors.length, (_) => 0);
-    assert(result != null);
     assert(result.isLeft());
     assert(errorCount1 == 2);
     assert(errorCount1 < errorCount2);
@@ -366,7 +363,7 @@ void main() {
 
   test('bypasses checkField when focused subfield is null', () {
     final errorValidator = Verify.error<String?>(Error('is null'));
-    final tUser = User(null, null, 23);
+    const tUser = User(null, null, 23);
     final validator =
         Verify.valid(tUser).checkField((user) => user.phone, errorValidator);
     final result = validator.verify(tUser);
@@ -386,7 +383,6 @@ void main() {
 
     final result = validator.verify(9);
     final errorCount = result.fold((errors) => errors.length, (_) => 0);
-    assert(result != null);
     assert(result.isLeft());
     assert(errorCount == 1);
   });
@@ -399,9 +395,8 @@ void main() {
     ]);
 
     final result = validator.verify(9);
-    assert(result != null);
     assert(result.isRight());
-    expect(result, Right(1));
+    expect(result, const Right(1));
   });
 
   group('product form error validation', () {

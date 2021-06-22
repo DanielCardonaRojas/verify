@@ -1,4 +1,3 @@
-import 'package:meta/meta.dart';
 import 'package:verify/verify.dart';
 
 enum ProductField {

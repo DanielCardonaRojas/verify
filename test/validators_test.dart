@@ -1,7 +1,8 @@
+import 'package:equatable/equatable.dart';
 import 'package:test/test.dart';
 import 'package:verify/verify.dart';
 
-class Error extends ValidationError {
+class Error extends ValidationError with EquatableMixin {
   final String message;
 
   Error(this.message);
