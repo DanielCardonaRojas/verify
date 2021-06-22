@@ -5,14 +5,14 @@ import 'package:verify_example/bloc/signup/signup_error.dart';
 final Validator_<SignUpState> signUpValidation = Verify.all<SignUpState>([
   Verify.subject<SignUpState>().checkField(
       (state) => state.password,
-      Verify.property((s) => s.length > 4,
+      Verify.property<String?>((s) => s != null && s.length > 4,
           error: SignUpError(
             field: SignUpFormField.password,
             message: 'incorrect length',
           ))),
   Verify.subject<SignUpState>().checkField(
       (state) => state.email,
-      Verify.property((s) => s.contains('@'),
+      Verify.property<String?>((s) => s?.contains('@') ?? false,
           error: SignUpError(
             field: SignUpFormField.email,
             message: 'invalid format',

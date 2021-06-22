@@ -47,7 +47,9 @@ class SignUpPage extends StatelessWidget {
   }
 
   Widget buildFormField(BuildContext context,
-      {String error, SignUpEvent Function(String) handler, String title}) {
+      {String? error,
+      required SignUpEvent Function(String) handler,
+      required String title}) {
     return Column(
       children: <Widget>[
         Text(title),
@@ -60,7 +62,7 @@ class SignUpPage extends StatelessWidget {
             ),
             hintStyle: TextStyle(color: Colors.white70),
             hintText: 'Please enter your phone number',
-            errorText: error ?? '',
+            errorText: error,
           ),
           onChanged: (value) {
             BlocProvider.of<SignUpBloc>(context).add(handler(value));
@@ -72,7 +74,7 @@ class SignUpPage extends StatelessWidget {
 }
 
 extension SafeList<E> on List<E> {
-  E get firstOrNull {
+  E? get firstOrNull {
     return this.isEmpty ? null : this.first;
   }
 }

@@ -3,7 +3,7 @@ os:
   - linux
 sudo: false
 dart:
-  - 2.7.0
+  - 2.12.0
 script:
   - pub get
   - pub run test test/

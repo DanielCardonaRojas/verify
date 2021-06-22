@@ -13,8 +13,7 @@ export './signup_event.dart';
 export './signup_state.dart';
 
 class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
-  @override
-  SignUpState get initialState => SignUpState.initial();
+  SignUpBloc() : super(SignUpState.initial());
 
   @override
   Stream<SignUpState> mapEventToState(SignUpEvent event) async* {

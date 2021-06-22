@@ -95,14 +95,14 @@ Given a model, for instance a user:
 
 ```dart
 class User extends Equatable {
-  final String phone;
-  final String mail;
-  final int age;
+  final String? phone;
+  final String? mail;
+  final int? age;
 
-  User(this.phone, this.mail, this.age);
+  const User(this.phone, this.mail, this.age);
 
   @override
-  List<Object> get props => [phone, mail, age];
+  List<Object> get props => [phone ?? '', mail ?? '', age ?? ''];
 }
 ```
 
@@ -111,8 +111,8 @@ and `checkField` methods.
 
 ```dart
 final userValidator = Verify.empty<User>()
-    .check((user) => !user.phone.isEmpty, error: Error('phone empty'))
-    .checkField((user) => user.mail, emailValidator);
+    .check((user) => !user.phone!.isEmpty, error: Error('phone empty'))
+    .checkField((user) => user.mail!, emailValidator);
 
 final someUser = User('','', 25);
 final Either<List<Error>, User> validationResult = userValidator.verify(someUser);
@@ -133,7 +133,7 @@ have it cast to a specific error type. Just supply a specific type parameter.
 ```dart
 final signUpValidation = Verify.subject<SignUpState>();
 final errors = signUpValidation
-    .verify<SignUpError>(newState) // Either<List<SignUpError>, SignUpState>
+    .verify<SignUpError>(newState); // Either<List<SignUpError>, SignUpState>
 ```
 ### Built in validators
 
@@ -162,7 +162,7 @@ class SignUpError extends ValidationError {
   final String message;
   final FormField field;
 
-  SignUpError(this.message, {@required this.field});
+  SignUpError(this.message, {required this.field});
 
   @override
   String get errorDescription => message;
