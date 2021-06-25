@@ -1,59 +1,18 @@
 import 'package:dartz/dartz.dart';
-import 'package:equatable/equatable.dart';
 import 'package:verify/verify.dart';
 import 'package:test/test.dart';
 import 'package:collection/collection.dart';
 
-import 'enumerated_error.dart';
-import 'product_error.dart';
-import 'user.dart';
+import 'data/enumerated_error.dart';
+import 'data/error.dart';
+import 'data/product_error.dart';
+import 'data/user.dart';
 
 class ValidateString {
   static Validator<String> length(int length,
       {required ValidationError error}) {
     return Verify.that((s) => s.length == length, error: error);
   }
-}
-
-enum ErrorCode {
-  userMailEmpty,
-  userMailFormat,
-  userPhoneEmpty,
-  userPhoneFormat,
-}
-
-class Error extends ValidationError with EquatableMixin {
-  final String message;
-
-  Error(this.message);
-
-  factory Error.fromCode(ErrorCode code) {
-    return Error(_mapCodeToString(code));
-  }
-
-  @override
-  String get errorDescription => message;
-
-  static String _mapCodeToString(ErrorCode code) {
-    switch (code) {
-      case ErrorCode.userMailEmpty:
-        return 'mail cant be empty';
-      case ErrorCode.userMailFormat:
-        return 'bad mail format';
-      case ErrorCode.userPhoneEmpty:
-        return 'phone cant be empty';
-      case ErrorCode.userPhoneFormat:
-        return 'bad phone format';
-      default:
-        return '';
-    }
-  }
-
-  @override
-  List<Object> get props => [message];
-
-  @override
-  bool get stringify => true;
 }
 
 void main() {
@@ -182,7 +141,7 @@ void main() {
     final error = Error('not a proper int');
     final ValidatorT<String, int> intParsingValidator =
         (String str) => Right(int.parse(str));
-    final validator = intParsingValidator.onException((_) => error);
+    final validator = intParsingValidator.catching((_) => error);
     final result = validator.verify('12s');
     final resultError = result.fold((e) => e.first, (v) => Error(''));
     assert(resultError == error);
@@ -334,6 +293,33 @@ void main() {
     assert(result?.errorDescription == Field2Error().errorDescription);
   });
 
+  test('Can have different typed errors', () {
+    final error1 = Verify.error<int>(Field1Error());
+    final error2 = Verify.error<int>('this is a string error');
+
+    final validator = Verify.all([
+      error1,
+      error2,
+    ]);
+
+    final errors = validator.errors(0);
+    assert(errors.length == 2);
+  });
+
+  test(
+      'Can select errors of specific type in a result with different typed errors',
+      () {
+    final error1 = Verify.error<int>(Field1Error());
+    final error2 = Verify.error<int>('this is a string error');
+
+    final validator = Verify.all([
+      error1,
+      error2,
+    ]);
+
+    final errors = validator.errors<ValidationError>(0);
+    assert(errors.length == 1);
+  });
   test('verify can filter error list when a generic parameter supplied', () {
     final error1 = Verify.error<int>(Field1Error());
     final error2 = Verify.error<int>(Field1Error());
@@ -354,7 +340,18 @@ void main() {
     assert(errorCount1 < errorCount2);
   });
 
-  test('bypasses validator when chaining a ignoreWhen clause', () {
+  test(
+      'bypasses validator when chaining a ignoreWhen with a succeeding predicate',
+      () {
+    final parentError = Error('some errror');
+    final validator = Verify.error<User>(parentError)
+        .ignoreWhen((subject) => (subject.age ?? 0) > 100);
+
+    final result = validator.verify(const User('phone', 'mail', 101));
+    assert(result.isRight());
+  });
+
+  test('bypasses validator when chaining a ignoreNull', () {
     final parentError = Error('some errror');
     final validator = Verify.error<User?>(parentError).ignoreNull();
     final result = validator.verify(null);
@@ -413,7 +410,7 @@ void main() {
 
       final errorMap = validator
           .verify<ProductError>(9)
-          .groupedErrorsBy((error) => error.field);
+          .errorsGroupedBy((error) => error.field);
       assert(errorMap.keys.length == 2);
       assert(errorMap[ProductField.field1]?.length == 2);
       assert(errorMap[ProductField.field2]?.length == 1);

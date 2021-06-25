@@ -161,7 +161,7 @@ packages:
       name: dartz
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.10.0-nullsafety.1"
+    version: "0.10.0-nullsafety.2"
   file:
     dependency: transitive
     description:
@@ -437,7 +437,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.2.0"
+    version: "2.0.0-nullsafety.1"
   watcher:
     dependency: transitive
     description:

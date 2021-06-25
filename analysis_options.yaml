@@ -1,6 +1,7 @@
 include: package:lint/analysis_options.yaml
 linter:
   rules:
+    public_member_api_docs: true
     parameter_assignments: true
     prefer_function_declarations_over_variables: false
     ambiguous_extension_member_access: false
