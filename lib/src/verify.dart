@@ -76,6 +76,18 @@ extension ValidatorUtils<S, T> on ValidatorT<S, T> {
     }).fold((l) => l, (r) => const []);
   }
 
+  /// Runs the validator and returns the first error of the provided generic type
+  ///
+  /// When supplied a type parameter the error list will be filtered
+  /// to all errors that have the given type.
+  /// This is handy when just error information is required.
+  ErrorType? firstError<ErrorType>(S subject) {
+    return this(subject).leftMap((errors) {
+      final Iterable<ErrorType> filtered = errors.whereType();
+      return filtered.toList().first;
+    }).fold((l) => l, (r) => null);
+  }
+
   /// Returns the validated and transformed subject
   /// If validation of subject fails returns null
   T? validated(S subject) {

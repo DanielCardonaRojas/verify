@@ -415,5 +415,25 @@ void main() {
       assert(errorMap[ProductField.field1]?.length == 2);
       assert(errorMap[ProductField.field2]?.length == 1);
     });
+
+    test('can retrieve single errors for field type', () {
+      final field1Error1 = ProductError('error1', field: ProductField.field1);
+      final field1Error2 = ProductError('error2', field: ProductField.field1);
+      final field2Error1 = ProductError('error1', field: ProductField.field2);
+
+      final validator = Verify.all<int>([
+        Verify.error(field1Error1),
+        Verify.error(field2Error1),
+        Verify.error(field1Error2),
+      ]);
+
+      final errorMap = validator
+          .verify<ProductError>(9)
+          .singleErrorsBy((error) => error.field);
+
+      assert(errorMap.keys.length == 2);
+      assert(errorMap[ProductField.field1] != null);
+      assert(errorMap[ProductField.field2] != null);
+    });
   });
 }

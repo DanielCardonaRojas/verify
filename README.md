@@ -26,17 +26,13 @@
 
 A fp inspired validation DSL. For Dart and Flutter projects.
 
-## Requirements
-
-The implementation of Verify relies heavily on dart extension methods, which are available
-for Dart versions >= 2.6
-
 ## Features
 
 - Completely extensible (create your own combinators, validator primitives, etc)
 - Flexible Verify is an extension based API (There is not single class created its all pure functions)
-- Customizable (Define you own error types) organize validators how ever you want
+- Customizable (Define you own error types if required) organize validators how ever you want
 - Bloc friendly (See [examples](https://github.com/DanielCardonaRojas/verify/tree/master/example) for a concrete implementation)
+- Null safe (as a prerelease)
 
 ## Usage
 
@@ -45,15 +41,16 @@ for Dart versions >= 2.6
 A Validator is just a simple function alias:
 
 ```dart
-// S is the input type and T the output type
-typedef Validator<S, T> = Either<List<ValidationError>, T> Function(S subject);
+// One of 2 variats depending on wether the validated subject will be transformed into another type or not
+typedef ValidatorT<S, T> = Either<List<dynamic>, T> Function(S subject);
+typedef Validator<S> = Either<List<dynamic>, S> Function(S subject);
 ```
 
 So you can create your own validator by just specifying a function for example:
 
 ```dart
-final Validator_<String> emailValidator = (String email) {
-  return email.contains('@') ? Right(email) : Left(Error('must contain @'))
+final Validator<String> emailValidator = (String email) {
+  return email.contains('@') ? Right(email) : Left('Bad email format')
 };
 ```
 
@@ -62,20 +59,21 @@ final Validator_<String> emailValidator = (String email) {
 A simpler way is to use some of the built in helpers.
 
 ```dart
-final contains@ = Verify.property(
+final contains@ = Verify.that(
   (String email) => email.contains('@'),
-    error: Error('email has to contain @')
+    error: 'Bad email format'
     );
 
-final notEmpty = Verify.property<String>((str) => !str.isEmpty, error: Error('field required'));
 ```
+
+Use custom errors and filter them by type
 
 ### Reuse validators
 
 Use composition to build up more complex validators.
 
 ```dart
-final Validator_<String> emailValidator = Verify.all([ contains@, notEmpty ])
+final Validator<String> emailValidator = Verify.all([ contains@, notEmpty ])
 ```
 
 ### Validate and transform
@@ -106,7 +104,7 @@ class User extends Equatable {
 }
 ```
 
-Additional checks can be performed on the object and its fields by chaining a series of `check` 
+Additional checks can be performed on the object and its fields by chaining a series of `check`
 and `checkField` methods.
 
 ```dart
@@ -121,20 +119,19 @@ final Either<List<Error>, User> validationResult = userValidator.verify(someUser
 > Note: The difference between check and checkField is that the later ignore the verification when the value is null,
 > this will likely change in next version supporting null safety.
 
-
 ### Run a validator
 
 Running a validator is a simple as passing in a parameter since its just a function.
-To be a bit more eloquent a `verify` method is provided, this method is special because besides 
-forwarding the argument to the calling validator it can also be used to filter the error list and 
+To be a bit more eloquent a `verify` method is provided, this method is special because besides
+forwarding the argument to the calling validator it can also be used to filter the error list and
 have it cast to a specific error type. Just supply a specific type parameter.
-
 
 ```dart
 final signUpValidation = Verify.subject<SignUpState>();
 final errors = signUpValidation
     .verify<SignUpError>(newState); // Either<List<SignUpError>, SignUpState>
 ```
+
 ### Built in validators
 
 Verify doesn't come with many built in validators, because they are so simple to create.
@@ -142,14 +139,12 @@ Verify doesn't come with many built in validators, because they are so simple to
 It does come with some regex shorthands.
 
 ```dart
-    final validator = RegExp(r"(^\d+$)") // Validator<String, int>
-        .matchOr(Error('not just digits'))
-        .map((str) => int.tryParse(str));
+final validator = Verify.fromRegex(RegExp(r"(^\d+$)", error: Error('not just digits')) // Validator<String, int>
 ```
 
 ### Form validation
 
-Often times you will have modeled your error type similar to: 
+Often times you will have modeled your error type similar to:
 
 ```dart
 enum FormField {
@@ -171,7 +166,7 @@ class SignUpError extends ValidationError {
 
 In these scenarios its convenient to be able to group errors by field.
 
-The solution verify provides for this is: 
+The solution verify provides for this is:
 
 ```dart
 final validator = Verify.inOrder<SignUpFormState>([
@@ -191,11 +186,11 @@ A slightly different API can be used to achieve the same results as the `inOrder
 
 ```dart
 final numberValidator = Verify.subject<int>()
-  .then(Verify.property(
+  .then(Verify.that(
     (subject) => subject % 2 == 0,
     error: Error('not even'),
   ))
-  .then(Verify.property(
+  .then(Verify.that(
     (subject) => subject >= 10,
     error: Error('single digit'),
   ));
@@ -205,5 +200,3 @@ final errors = numberValidator.errors(4); // yields 1 error
 ```
 
 This way you have quick access to errors segmented by field.
-
-
