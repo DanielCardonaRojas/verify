@@ -15,5 +15,11 @@ jobs:
           flutter-version: "2.0.0"
       - name: "Fetch dependencies"
         run: flutter pub get
+      - name: "Install test_coverage"
+        run: dart pub global activate test_coverage
       - name: "Run tests"
         run: flutter test
+      - name: "Collect coverage data"
+        run: test_coverage
+      - name: "Publish to Codecov"
+        run: bash <(curl -s https://codecov.io/bash)
