@@ -1,6 +1,6 @@
 name: verify
 description: Validations made simple. An extension based validation DSL.
-version: 2.0.0-nullsafety.1
+version: 2.0.0
 homepage: https://github.com/DanielCardonaRojas/verify
 
 environment:
@@ -8,7 +8,7 @@ environment:
 
 dependencies:
   collection: ^1.15.0
-  dartz: ">=0.10.0-nullsafety.2 <1.0.0"
+  dartz: ^0.10.0
 
 dev_dependencies:
   equatable: ^2.0.0
