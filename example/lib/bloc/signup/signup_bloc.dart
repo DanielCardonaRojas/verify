@@ -26,7 +26,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
 
     final errors = signUpValidation
         .verify<SignUpError>(newState)
-        .groupedErrorsBy((error) => error.field)
+        .errorsGroupedBy((error) => error.field)
         .messages;
 
     yield newState.copyWith(errors: errors);

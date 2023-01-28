@@ -1,16 +1,16 @@
 import 'package:dartz/dartz.dart';
 
-import 'base_types.dart';
+import 'package:verify/src/base_types.dart';
 
 /// Extensions to facilitate manipulating validation results.
 extension ValidationResult<T, E extends ValidationError> on Either<List<E>, T> {
   /// Gets the first error according to the composition sequence used
   /// creating of calling validation result
   E? get firstError {
-    return fold((errors) => errors.first, (_) => null);
+    return fold((errors) => errors.isEmpty ? null : errors.first , (_) => null);
   }
 
-  /// Returns a map of grouped validatiton errors keyed by a formfield type.
+  /// Returns a map of grouped validation errors keyed by a formfield type.
   ///
   /// The provided selector must be a the field in the provided error that uniquely
   /// identifies the corresponding form field.
