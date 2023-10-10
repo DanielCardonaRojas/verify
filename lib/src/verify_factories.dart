@@ -4,7 +4,7 @@ part of 'verify.dart';
 ///
 /// All the methods in this scope are static
 extension Verify on ValidatorT {
-  /// Creates an always succeding validator
+  /// Creates an always succeeding validator
   ///
   /// Ignores input and always returns the provided value.
   static Validator<S> valid<S>(S subject) {

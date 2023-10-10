@@ -84,7 +84,8 @@ extension ValidatorUtils<S, T> on ValidatorT<S, T> {
   ErrorType? firstError<ErrorType>(S subject) {
     return this(subject).leftMap((errors) {
       final Iterable<ErrorType> filtered = errors.whereType();
-      return filtered.toList().first;
+      final list = filtered.toList();
+      return list.isEmpty ? null : list.first;
     }).fold((l) => l, (r) => null);
   }
 

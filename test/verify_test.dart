@@ -8,13 +8,6 @@ import 'data/error.dart';
 import 'data/product_error.dart';
 import 'data/user.dart';
 
-class ValidateString {
-  static Validator<String> length(int length,
-      {required ValidationError error}) {
-    return Verify.that((s) => s.length == length, error: error);
-  }
-}
-
 void main() {
   final listEquality = const ListEquality().equals;
 
@@ -131,7 +124,7 @@ void main() {
     assert(result.isLeft());
   });
 
-  test('Can create and run an always succeding validator', () {
+  test('Can create and run an always succeeding validator', () {
     final validator = Verify.valid(tUserGood);
     final result = validator.verify(tUserBad);
     assert(result.isRight());
@@ -211,7 +204,7 @@ void main() {
   });
 
   test(
-      'performing a succeding check on a failing validator returns a single value error list',
+      'performing a succeeding check on a failing validator returns a single value error list',
       () {
     final parentError = Error('some errror');
     const tUser = User('', '', 10);

@@ -177,7 +177,7 @@ final validator = Verify.inOrder<SignUpFormState>([
 
 final Map<FormField, SignUpError> errorMap = validator
     .verify<SignUpError>(someState)
-    .groupedErrorsBy((error) => error.field);
+    .errorsGroupedBy((error) => error.field);
 ```
 
 ## Sequencing
