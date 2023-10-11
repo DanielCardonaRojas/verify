@@ -1,7 +1,7 @@
-import 'package:dartz/dartz.dart';
-import 'package:verify/verify.dart';
-import 'package:test/test.dart';
 import 'package:collection/collection.dart';
+import 'package:dartz/dartz.dart';
+import 'package:test/test.dart';
+import 'package:verify/verify.dart';
 
 import 'data/enumerated_error.dart';
 import 'data/error.dart';
@@ -77,7 +77,7 @@ void main() {
   test('join only accumulates on error at a time', () {
     final numberValidator = Verify.subject<int>()
         .then(Verify.that(
-          (subject) => subject % 2 == 0,
+          (subject) => subject.isEven,
           error: Error('not even'),
         ))
         .then(Verify.that(

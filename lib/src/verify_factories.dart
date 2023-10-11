@@ -38,8 +38,10 @@ extension Verify on ValidatorT {
   }
 
   /// Creates a validator on S by applying a validator on a subfield of S.
-  static Validator<S> at<S, T>(Selector<S, T> selector,
-      {required Validator<T> validator}) {
+  static Validator<S> at<S, T>(
+    Selector<S, T> selector, {
+    required Validator<T> validator,
+  }) {
     return (S subject) {
       final field = selector(subject);
       return validator(field).fold((l) => Left(l), (_) => Right(subject));

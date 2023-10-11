@@ -1,11 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:verify/verify.dart';
 
-import 'base_types.dart';
 export 'package:dartz/dartz.dart' show Either;
 
-part 'verify_utils.dart';
 part 'verify_factories.dart';
+part 'verify_utils.dart';
 
 /// Extension for methods related to subfield validations.
 extension VerifyProperties<S> on Validator<S> {
@@ -27,7 +26,9 @@ extension VerifyProperties<S> on Validator<S> {
   /// the focused field is null. This is common when validating forms in which null represents
   /// a field which has not being visited.
   Validator<S> checkField<F>(
-      Selector<S, F?> selector, Validator<F> verification) {
+    Selector<S, F?> selector,
+    Validator<F> verification,
+  ) {
     final bypassingValidation = _makeOptional(verification);
     final Validator<S> fieldValidator = (S s) {
       final focus = selector(s);
@@ -57,7 +58,8 @@ extension ValidatorUtils<S, T> on ValidatorT<S, T> {
   /// When supplied a type parameter the error list will be filtered
   /// to all errors that have the given type.
   Either<List<ErrorType>, T> verify<ErrorType extends ValidationError>(
-      S subject) {
+    S subject,
+  ) {
     return this(subject).leftMap((errors) {
       final Iterable<ErrorType> filtered = errors.whereType();
       return filtered.toList();
