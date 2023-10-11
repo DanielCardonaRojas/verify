@@ -1,4 +1,9 @@
 # Change log
+
+## [2.0.1] - Bug fixing
+- Fix typos
+- Add mapErrors helper
+
 ## [1.2.0] - Null safety support
 
 - Renames Validator to ValidatorT and Validator_ to Validator
