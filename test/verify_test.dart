@@ -29,6 +29,20 @@ void main() {
     assert(error1 == error2);
   });
 
+  test('can map errors', () {
+    const someUser = User('', '', null);
+    final Validator<User> validator =
+        (_) => const Left(['first error', 'second']);
+
+    final errors = validator.mapErrors((error) {
+      final errorMessage = error as String?;
+      if (errorMessage == null) return null;
+      return Error(errorMessage);
+    }).errors<Error>(someUser);
+
+    assert(errors.length == 2);
+  });
+
   test('flatmap does not collect both validator errors', () {
     const someUser = User('', '', null);
     final error1 = Error('validation error');

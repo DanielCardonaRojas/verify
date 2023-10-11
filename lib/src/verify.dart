@@ -112,6 +112,26 @@ extension ValidatorUtils<S, T> on ValidatorT<S, T> {
     };
   }
 
+  /// Transforms errors produced by the validor
+  //
+  /// Leaving the validation logic untouched.
+  /// returns validator with coerced output.
+  ValidatorT<S, T> mapErrors<E>(Function1<dynamic, E?> transform) {
+    return (S input) {
+      final eitherErrorOrResult = this(input);
+      return eitherErrorOrResult.leftMap((errorList) {
+        return errorList.map((e) {
+          final newError = transform(e);
+          if (newError == null) {
+            return e;
+          }
+
+          return newError as dynamic;
+        }).toList();
+      });
+    };
+  }
+
   /// Chains a validation to the output
   ///
   /// Equivalent to flatMap((_) => validator)
